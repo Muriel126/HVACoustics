@@ -10,9 +10,8 @@ namespace HVACoustics
 {
     class ConstructionOfBuildingElements
     {
-        public static string GetConstruction(IfcStore model, string globalIdConnectedBuildingElement)
+        public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement)
         {
-            string constructionType = "";
             IIfcElement theWall = model.Instances.FirstOrDefault<IIfcElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
 
             List<string> MaterialList = new List<string>();
@@ -28,31 +27,59 @@ namespace HVACoustics
                 Console.WriteLine("Material Name: " + materialLayer.Material.Name);
             }
 
-            Console.WriteLine();
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Now enter which type of building element the material layer set represents: ");
-            Console.WriteLine("a: Ständerwand");
-            Console.WriteLine("b: Massivholzwand");
-            Console.WriteLine("c: Beton / Estrich");
+
+            Console.WriteLine("a: Massivholzwand");
+            Console.WriteLine("b: einfach Ständerwerk");
+            Console.WriteLine("c: getrenntes Ständerwerk");
+            Console.WriteLine("d: einfaches Ständerwerk mit Konterlattung");
+            Console.WriteLine("e: einfach Ständerwerk Metall");
+            Console.WriteLine("f: getrenntes Ständerwerk Metall");
+            Console.WriteLine("g: Installationswand");
+            Console.WriteLine("h: Holzbalkendecke");
+            Console.WriteLine("i: Holzbetonverbund");
+
             Console.WriteLine();
             string option = Console.ReadLine();
 
             if (option == "a")
             {
-                constructionType = "Ständerwand";
-                return constructionType;
+                return Enums.TypeBuildingConstruction.SolidTimber;      
             }
             if (option == "b")
             {
-                constructionType = "Massivholzwand";
-                return constructionType;
+                return Enums.TypeBuildingConstruction.TimberFrameSingle;
             }
             if (option == "c")
             {
-                constructionType = "Beton";
-                return constructionType;
+                return Enums.TypeBuildingConstruction.TimberFrameDouble;
             }
-            return constructionType = "no type found";
+            if (option == "d")
+            {
+                return Enums.TypeBuildingConstruction.TimberFrameSingleWithCrossBattens;
+            }
+            if (option == "e")
+            {
+                return Enums.TypeBuildingConstruction.SteelFrame;
+            }
+            if (option == "f")
+            {
+                return Enums.TypeBuildingConstruction.SteelFrameDouble;
+            }
+            if (option == "g")
+            {
+                return Enums.TypeBuildingConstruction.PlumbingWall;
+            }
+            if (option == "h")
+            {
+                return Enums.TypeBuildingConstruction.TimberJoistFloor;
+            }
+            if (option == "i")
+            {
+                return Enums.TypeBuildingConstruction.TimberConcreteComposite;
+            }
+            return Enums.TypeBuildingConstruction.Default;
         }
     }
 }

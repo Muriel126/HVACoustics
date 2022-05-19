@@ -70,17 +70,17 @@ namespace Holzbau
                 string globalIdReciever = "1U9qYuLWb7dgxXzDzBsmt5";
 
                 string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
-                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0}", roomConfig);
+                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);
                 Console.ReadKey();
 
                 string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
                 
                 string typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
-                Console.WriteLine("The type of the building element is: {0}", typeOfBuildingElement);
+                Console.WriteLine("The type of the building element is: {0} \n", typeOfBuildingElement);
                 Console.ReadKey();
 
-                Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.");
-                string constructionType = ConstructionOfBuildingElements.GetConstruction(model, globalIdConnectedBuildingElement);
+                Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
+                Enums.TypeBuildingConstruction constructionType = ConstructionOfBuildingElements.GetConstruction(model, globalIdConnectedBuildingElement);
                 Console.WriteLine("The construction type is: {0}", constructionType);
 
                 model.SaveAs(fileNameNew);

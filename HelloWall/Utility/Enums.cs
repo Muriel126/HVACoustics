@@ -31,5 +31,28 @@ namespace HVACoustics
             Yneg,
             sameCor
         }
+        public enum TypeBuildingElement
+        {
+            Concrete,
+            SolidTimber,
+            TimberJoistFloor,   //Holzbalkendecke
+            TimberRibbOrBoxModules,  //Holztippen- oder Holzkastendecke
+            TimberConcreteComposite   //Holzbetonverbundwand
+        }
+        public enum TypeBuildingConstruction
+        {
+            Concrete,
+            Masonary,    //Mauerwerk
+            PlumbingWall,   //Installationswand
+            SolidTimber,   //Massivholz
+            SteelFrame,   //einfach Ständerwerk Metall
+            SteelFrameDouble,   //getrenntes Ständerwerk Metall
+            TimberFrameSingle,   //einfach Ständerwerk
+            TimberFrameDouble,   //getrenntes Ständerwerk
+            TimberFrameSingleWithCrossBattens,   //einfach Ständerwerk mit Konterlattung
+            TimberJoistFloor,   //Holzbalkendecke
+            TimberConcreteComposite,   //Holzbetonverbund
+            Default
+        }
     }
 }
