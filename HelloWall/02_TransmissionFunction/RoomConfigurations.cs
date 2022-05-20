@@ -19,7 +19,7 @@ using Xbim.ModelGeometry.Scene;
 using Xbim.Common.Geometry;
 using System.IO;
 using Xbim.Common.XbimExtensions;
-
+using NestedDictionaryLib;
 
 namespace HVACoustics
 {
@@ -27,6 +27,38 @@ namespace HVACoustics
     {
         private static double tolerance = 0.2;
         private static double eqWallThick = 0.4;
+
+        public static double X1 { get; set; }
+        public static double Y1 { get; set; }
+        public static double X1rounded { get; set; }
+        public static double Y1rounded { get; set; }
+        public static double XDim1 { get; set; }
+        public static double YDim1 { get; set; }
+        public static double X1EndRounded { get; set; }
+        public static double Y1EndRounded { get; set; }
+
+        public static double X2 { get; set; }
+        public static double Y2 { get; set; }
+        public static double X2rounded { get; set; }
+        public static double Y2rounded { get; set; }
+        public static double XDim2 { get; set; }
+        public static double YDim2 { get; set; }
+        public static double X2EndRounded { get; set; }
+        public static double Y2EndRounded { get; set; }
+
+        public static double direcX1 { get; set; }
+        public static double direcY1 { get; set; }
+        public static double direcX2 { get; set; }
+        public static double direcY2 { get; set; }
+        public static string globalIdStorey1 { get; set; }
+        public static string globalIdStorey2 { get; set; }
+        public static int indexStorey1 { get; set; }
+        public static int indexStorey2 { get; set; }
+        public static int indexSpaceX1 { get; set; }
+        public static int indexSpaceY1 { get; set; }
+        public static int indexSpaceX2 { get; set; }
+        public static int indexSpaceY2 { get; set; }
+        public static Enums.TypeOfPoint typeOfPoint { get; set; }
 
         public static void GetGeometrySpace(IfcStore model)
         {
@@ -53,34 +85,101 @@ namespace HVACoustics
             Console.WriteLine(vec);*/
         }
 
+        public static List<double> GetRoomsAlongAxis(Enums.TypeDirec typeDirec, Enums.TypeOfPoint typeOfPoint, NestedDictionary<string, double, double> dictCoors, NestedDictionary<string, double, double> dictCoorsWithXDim, NestedDictionary<string, double, double> dictCoorsWithYDim , double X1rounded, double Y1rounded)
+        {
+            List<double> listCoorsAlongAxis = new List<double>();
+            //Console.WriteLine(typeDirec);
+            //Console.WriteLine(X1rounded);
+            if (typeOfPoint == Enums.TypeOfPoint.start)
+            {
+                if (typeDirec == Enums.TypeDirec.Xpos || typeDirec == Enums.TypeDirec.Xneg)
+                {
+                    foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictCoors)
+                    {
+                        foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
+                        {
+                            //wenn der Raum in X-Richtung verschoben ist, müssen alle X-Werte auf der gleichen Y-Achse festgestellt werden
+                            //deshalb wird der Y-Eckpunkt vom betrachteten Raum ausfindig gemacht und anschließend alle Räume mit demselben Y-Eckpunkt in eine Liste gefüllt
+                            if (kvp2.Value == Y1rounded)
+                            {
+                                listCoorsAlongAxis.Add(kvp2.Key);
+                            }
+                        }
+                    }
+                    foreach (var x in listCoorsAlongAxis)
+                    {
+                        Console.WriteLine(x);
+                    }
+                }
+                if (typeDirec == Enums.TypeDirec.Ypos || typeDirec == Enums.TypeDirec.Yneg)
+                {
+                    foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictCoors)
+                    {
+                        foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
+                        {
+                            if (kvp2.Key == X1rounded)
+                            {
+                                listCoorsAlongAxis.Add(kvp2.Value);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (typeOfPoint == Enums.TypeOfPoint.end)
+            {
+                if (typeDirec == Enums.TypeDirec.Xpos || typeDirec == Enums.TypeDirec.Xneg)
+                {
+                    foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictCoorsWithYDim)
+                    {
+                        foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
+                        {
+                            //wenn der Raum in X-Richtung verschoben ist, müssen alle X-Werte auf der gleichen Y-Achse festgestellt werden
+                            //deshalb wird der Y-Eckpunkt vom betrachteten Raum ausfindig gemacht und anschließend alle Räume mit demselben Y-Eckpunkt in eine Liste gefüllt
+                            Console.WriteLine(kvp2.Value);
+                            Console.WriteLine(Y1EndRounded);
+                            if (kvp2.Value == Y1EndRounded)
+                            {
+                                listCoorsAlongAxis.Add(kvp2.Key);
+                            }
+                        }
+                    }
+                   /* foreach (var x in listCoorsAlongAxis)
+                    {
+                        Console.WriteLine("in list {0}", x);
+                    }*/
+                }
+                if (typeDirec == Enums.TypeDirec.Ypos || typeDirec == Enums.TypeDirec.Yneg)
+                {
+                    foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictCoors)
+                    {
+                        foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
+                        {
+                            
+                            if (kvp2.Key == X1EndRounded)
+                            {
+                                listCoorsAlongAxis.Add(kvp2.Value);
+                            }
+                        }
+                    }
+                }
+            }
+            return listCoorsAlongAxis;
+        }
+
         public static Enums.TypeRoomConfig GetRoomConfiguration(IfcStore model, string senderID, string recieverID)
         {
             var geo = new GeometryHandler();
             var config = new RoomConfigurations();
             var helper = new Helper();
 
-            List<double> dictCoorInOffsetXDirec = new List<double>();
-            List<double> dictCoorInOffsetYDirec = new List<double>();
-            double X1 = 0;
-            double Y1 = 0;
-            double XDim1 = 0;
-            double YDim1 = 0;
-            double X2 = 0;
-            double Y2 = 0;
-            double XDim2 = 0;
-            double YDim2 = 0;
-            double direcX1 = 0;
-            double direcY1 = 0;
-            double direcX2 = 0;
-            double direcY2 = 0;
-            string globalIdStorey1 = "";
-            string globalIdStorey2 = "";
-            int indexStorey1 = 0;
-            int indexStorey2 = 0;
-            int indexSpaceX1 = 0;
-            int indexSpaceY1 = 0;
-            int indexSpaceX2 = 0;
-            int indexSpaceY2 = 0;
+            List<double> listCoorsInOffsetXDirec = new List<double>();
+            List<double> listCoorsInOffsetYDirec = new List<double>();
+            //Dictionary<string, double> dictSpaceCoors = new Dictionary<string, double>();
+            NestedDictionary<string,double,double> dictCoors = new NestedDictionary<string, double, double>();
+            NestedDictionary<string, double, double> dictCoorsWithXDim = new NestedDictionary<string, double, double>();
+            NestedDictionary<string, double, double> dictCoorsWithYDim = new NestedDictionary<string, double, double>();
+
 
             var building = model.Instances.FirstOrDefault<IIfcBuilding>();
             //first get sender and reciever space
@@ -98,8 +197,12 @@ namespace HVACoustics
                 foreach (var v in listRooms)
                 {
                     var bbSpace = geo.CreateBoundingBoxAroundSpace(model, v);
-                    bool keyXExists = dictCoorInOffsetXDirec.Contains(Math.Round(bbSpace.X, 0));
-                    bool keyYExists = dictCoorInOffsetYDirec.Contains(Math.Round(bbSpace.Y, 0));
+                    dictCoors.Add(v.GlobalId, Math.Round(bbSpace.X, 0), Math.Round(bbSpace.Y, 0));
+                    dictCoorsWithXDim.Add(v.GlobalId, Math.Round(bbSpace.X, 0) + Math.Round(bbSpace.SizeX,0), Math.Round(bbSpace.Y, 0));
+                    dictCoorsWithYDim.Add(v.GlobalId, Math.Round(bbSpace.X, 0) , Math.Round(bbSpace.Y, 0) + Math.Round(bbSpace.SizeY, 0));
+
+                    /*bool keyXExists = listCoorsInOffsetXDirec.Contains(Math.Round(bbSpace.X, 0));
+                    bool keyYExists = listCoorsInOffsetYDirec.Contains(Math.Round(bbSpace.Y, 0));
 
                     if (keyXExists)
                     {
@@ -107,7 +210,7 @@ namespace HVACoustics
                     }
                     else
                     {
-                        dictCoorInOffsetXDirec.Add(Math.Round(bbSpace.X, 0));
+                        listCoorsInOffsetXDirec.Add(Math.Round(bbSpace.X, 0));
                     }
                     if (keyYExists)
                     {
@@ -115,23 +218,24 @@ namespace HVACoustics
                     }
                     else
                     {
-                        dictCoorInOffsetYDirec.Add(Math.Round(bbSpace.Y, 0));
-                    }
+                        listCoorsInOffsetYDirec.Add(Math.Round(bbSpace.Y, 0));
+                    }*/
                 }
-                dictCoorInOffsetXDirec = dictCoorInOffsetXDirec.OrderBy(obj => obj).ToList();
-                dictCoorInOffsetYDirec = dictCoorInOffsetYDirec.OrderBy(obj => obj).ToList();
+                //listCoorsInOffsetXDirec = listCoorsInOffsetXDirec.OrderBy(obj => obj).ToList();
+                //listCoorsInOffsetYDirec = listCoorsInOffsetYDirec.OrderBy(obj => obj).ToList();
 
-               /* foreach (var x in dictCoorInOffsetXDirec)
+                //Helper.PrintNestedDictionary(dictCoors);
+                foreach (var x in listCoorsInOffsetXDirec)
                 {
                     Console.WriteLine("list X1 {0}", x);
-                }   
-                foreach (var x in dictCoorInOffsetYDirec)
+                }
+                /*foreach (var x in listCoorsInOffsetYDirec)
                 {
                     Console.WriteLine("list Y1 {0}", x);
                 }*/
                 indexStorey1 = listStoreys.IndexOf(element);
             }
-
+            
             var storey2 = reciever.Decomposes.Select(x => x.RelatingObject as IIfcBuildingStorey);
             foreach (var element in storey2)
             {
@@ -145,17 +249,17 @@ namespace HVACoustics
             XbimRect3D prodBox1 = geo.CreateBoundingBoxAroundSpace(model, sender);
             XbimRect3D prodBox2 = geo.CreateBoundingBoxAroundSpace(model, reciever);
             X1 = Math.Round(prodBox1.Location.X, 2);
-            var X1short = Math.Round(prodBox1.Location.X, 0);
+            X1rounded = Math.Round(prodBox1.Location.X, 0);
             Y1 = Math.Round(prodBox1.Location.Y, 2);
-            var Y1short = Math.Round(prodBox1.Location.Y, 0);
+            Y1rounded = Math.Round(prodBox1.Location.Y, 0);
             X2 = Math.Round(prodBox2.Location.X, 2);
-            var X2short = Math.Round(prodBox2.Location.X, 0);
+            X2rounded = Math.Round(prodBox2.Location.X, 0);
             Y2 = Math.Round(prodBox2.Location.Y, 2);
-            var Y2short = Math.Round(prodBox2.Location.Y, 0);
-            indexSpaceX1 = dictCoorInOffsetXDirec.IndexOf(X1short);
-            indexSpaceY1 = dictCoorInOffsetYDirec.IndexOf(Y1short);
-            indexSpaceX2 = dictCoorInOffsetXDirec.IndexOf(X2short);
-            indexSpaceY2 = dictCoorInOffsetYDirec.IndexOf(Y2short);
+            Y2rounded = Math.Round(prodBox2.Location.Y, 0);
+            /*indexSpaceX1 = listCoorsInOffsetXDirec.IndexOf(X1rounded);
+            indexSpaceY1 = listCoorsInOffsetYDirec.IndexOf(Y1rounded);
+            indexSpaceX2 = listCoorsInOffsetXDirec.IndexOf(X2rounded);
+            indexSpaceY2 = listCoorsInOffsetYDirec.IndexOf(Y2rounded);*/
 
             //now get the direction of Shape of the space
             var rep1 = sender.Representation.Representations;
@@ -207,6 +311,11 @@ namespace HVACoustics
                 XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
                 YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
             }
+
+            X1EndRounded = X1rounded + Math.Round(XDim1, 0);
+            Y1EndRounded = Y1rounded + Math.Round(YDim1, 0);
+            X2EndRounded = X2rounded + Math.Round(XDim2, 0);
+            Y2EndRounded = Y2rounded + Math.Round(YDim2, 0);
             /* Console.WriteLine(direcX1);
              Console.WriteLine(direcY1);
              Console.WriteLine(direcX2);
@@ -239,7 +348,7 @@ namespace HVACoustics
             }
             else if (globalIdStorey1 == globalIdStorey2)
             {
-                roomConfig = config.TryHorizontalConfigs(X1, Y1, XDim1, YDim1, X2, Y2, XDim2, YDim2, indexSpaceX1, indexSpaceY1, indexSpaceX2, indexSpaceY2);
+                roomConfig = config.TryHorizontalConfigs(X1, Y1, XDim1, YDim1, X2, Y2, XDim2, YDim2, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim);
             }
             else if (globalIdStorey1 != globalIdStorey2)
             {
@@ -249,10 +358,11 @@ namespace HVACoustics
             return roomConfig;
         }
 
-        public Enums.TypeRoomConfig TryHorizontalConfigs(double X1, double Y1, double XDim1, double YDim1, double X2, double Y2, double XDim2, double YDim2, int indexSpaceX1, int indexSpaceY1, int indexSpaceX2, int indexSpaceY2)
+        public Enums.TypeRoomConfig TryHorizontalConfigs(double X1, double Y1, double XDim1, double YDim1, double X2, double Y2, double XDim2, double YDim2, NestedDictionary<string, double, double> dictCoors, NestedDictionary<string, double, double> dictCoorsWithXDim, NestedDictionary<string, double, double> dictCoorsWithYDim)
         {
             var geo = new GeometryHandler();
             Enums.TypeRoomConfig roomConfig = new Enums.TypeRoomConfig();
+            List<double> listCoorsAlongAxis = new List<double>();
             var direcX = geo.GetDirection(X1, X2, 0, 0);
             var direcY = geo.GetDirection(0, 0, Y1, Y2);
             //Console.WriteLine(direcX);
@@ -264,7 +374,7 @@ namespace HVACoustics
                     if ((Y1 + YDim1 + eqWallThick) > Y2)
                     {
                         //Raum 1. Ord.
-                        if (XDim1 == XDim2)
+                        if (XDim1 + tolerance == XDim2 || XDim1 == XDim2 + tolerance)
                         {
                             return Enums.TypeRoomConfig.hor;
                         }
@@ -276,6 +386,10 @@ namespace HVACoustics
                     else
                     {
                         //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.start, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1rounded, Y1rounded);
+                        indexSpaceY1 = listCoorsAlongAxis.IndexOf(Y1rounded);
+                        indexSpaceY2 = listCoorsAlongAxis.IndexOf(Y2rounded);
+
                         if (indexSpaceY1 + 2 == indexSpaceY2)
                         {
                             return Enums.TypeRoomConfig.hor1Room;
@@ -292,7 +406,7 @@ namespace HVACoustics
                     if ((Y2 + YDim2 + eqWallThick) > Y1)
                     {
                         //Raum 1. Ord.
-                        if (XDim1 == XDim2)
+                        if (XDim1 + tolerance == XDim2 || XDim1 == XDim2 + tolerance)
                         {
                             return Enums.TypeRoomConfig.hor;
                         }
@@ -304,6 +418,10 @@ namespace HVACoustics
                     else
                     {
                         //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.start, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1rounded, Y1rounded);
+                        indexSpaceY1 = listCoorsAlongAxis.IndexOf(Y1rounded);
+                        indexSpaceY2 = listCoorsAlongAxis.IndexOf(Y2rounded);
+
                         if (indexSpaceY1 == indexSpaceY2 + 2)
                         {
                             return Enums.TypeRoomConfig.hor1Room;
@@ -317,17 +435,114 @@ namespace HVACoustics
             }
             else if (X1 + XDim1 - tolerance < X2 + XDim2 && X1 + XDim1 + tolerance > X2 + XDim2 || X2 + XDim2 - tolerance < X1 + XDim1 && X2 + XDim2 + tolerance > X1 + XDim1) //gleicher Endpunkt
             {
-                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                //hier auch noch Rum höherer Ord.?
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen und daher haben Räume unterschiedliche Länge
+                //hier auch noch Raum höherer Ord.?
 
-                return Enums.TypeRoomConfig.horNegOff;
+                if (direcY == Enums.TypeDirec.Ypos)
+                {
+                    if ((Y1 + YDim1 + eqWallThick) > Y2)
+                    {
+                        //Raum 1. Ord.
+                        return Enums.TypeRoomConfig.horNegOff;
+                    }
+                    else
+                    {
+
+                        //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcY, Enums.TypeOfPoint.end, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1EndRounded, Y1EndRounded);
+                        indexSpaceY1 = listCoorsAlongAxis.IndexOf(Y1rounded);
+                        indexSpaceY2 = listCoorsAlongAxis.IndexOf(Y2rounded);
+
+                        if (indexSpaceY1 + 2 == indexSpaceY2)
+                        {
+                            return Enums.TypeRoomConfig.hor1Room;
+                        }
+                        if (indexSpaceY1 + 3 == indexSpaceY2)
+                        {
+                            return Enums.TypeRoomConfig.hor2Room;
+                        }
+                    }
+                }
+
+                if (direcY == Enums.TypeDirec.Yneg)
+                {
+                    if ((Y2 + YDim2 + eqWallThick) > Y1)
+                    {
+                        //Raum 1. Ord.
+                        return Enums.TypeRoomConfig.horNegOff;
+                    }
+                    else
+                    {
+                        //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.end, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1EndRounded, Y1EndRounded);
+                        indexSpaceY1 = listCoorsAlongAxis.IndexOf(Y1rounded);
+                        indexSpaceY2 = listCoorsAlongAxis.IndexOf(Y2rounded);
+
+                        if (indexSpaceY1 == indexSpaceY2 + 2)
+                        {
+                            return Enums.TypeRoomConfig.hor1Room;
+                        }
+                        if (indexSpaceY1 == indexSpaceY2 + 3)
+                        {
+                            return Enums.TypeRoomConfig.hor2Room;
+                        }
+                    }
+                }
             }
             else if (Y1 + YDim1 - tolerance < Y2 + YDim2 && Y1 + YDim1 + tolerance > Y2 + YDim2 || Y2 + YDim2 - tolerance < Y1 + YDim1 && Y2 + YDim2 + tolerance > Y1 + YDim1) //gleicher Endpunkt
             {
-                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                //hier auch noch Rum höherer Ord.?
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen und daher haben Räume unterschiedliche Länge
+                //hier auch noch Raum höherer Ord.?
+                if (direcX == Enums.TypeDirec.Xpos)
+                {
+                    if ((X1 + XDim1 + eqWallThick) > X2)
+                    {
+                        //Raum 1. Ord.
+                        return Enums.TypeRoomConfig.horNegOff;
+                    }
+                    else
+                    {
 
-                return Enums.TypeRoomConfig.horNegOff;
+                        //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.end, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1EndRounded, Y1EndRounded);
+                        indexSpaceX1 = listCoorsAlongAxis.IndexOf(X1rounded);
+                        indexSpaceX2 = listCoorsAlongAxis.IndexOf(X2rounded);
+
+                        if (indexSpaceX1 + 2 == indexSpaceX2)
+                        {
+                            return Enums.TypeRoomConfig.hor1Room;
+                        }
+                        if (indexSpaceX1 + 3 == indexSpaceX2)
+                        {
+                            return Enums.TypeRoomConfig.hor2Room;
+                        }
+                    }
+                }
+
+                if (direcX == Enums.TypeDirec.Xneg)
+                {
+                    if ((X2 + XDim2 + eqWallThick) > X1)
+                    {
+                        //Raum 1. Ord.
+                        return Enums.TypeRoomConfig.horNegOff;
+                    }
+                    else
+                    {
+                        //Raum höherer Ord.
+                        listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.end, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1EndRounded, Y1EndRounded);
+                        indexSpaceX1 = listCoorsAlongAxis.IndexOf(X1rounded);
+                        indexSpaceX2 = listCoorsAlongAxis.IndexOf(X2rounded);
+
+                        if (indexSpaceX1 == indexSpaceX2 + 2)
+                        {
+                            return Enums.TypeRoomConfig.hor1Room;
+                        }
+                        if (indexSpaceX1 == indexSpaceX2 + 3)
+                        {
+                            return Enums.TypeRoomConfig.hor2Room;
+                        }
+                    }
+                }
             }
             else if (X1 != X2)
             {
@@ -338,7 +553,7 @@ namespace HVACoustics
                         if ((X1 + XDim1 + eqWallThick) > X2)
                         {
                             //Raum 1. Ord.
-                            if (XDim1 == XDim2)
+                            if (XDim1 + tolerance == XDim2 || XDim1 == XDim2 + tolerance)
                             {
                                 return Enums.TypeRoomConfig.hor;
                             }
@@ -350,6 +565,10 @@ namespace HVACoustics
                         else
                         {
                             //Raum höherer Ord.
+                            listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.start, dictCoors,dictCoorsWithXDim, dictCoorsWithYDim, X1rounded, Y1rounded);
+                            indexSpaceX1 = listCoorsAlongAxis.IndexOf(X1rounded);
+                            indexSpaceX2 = listCoorsAlongAxis.IndexOf(X2rounded);
+
                             if (indexSpaceX1 + 2 == indexSpaceX2)
                             {
                                 return Enums.TypeRoomConfig.hor1Room;
@@ -365,7 +584,7 @@ namespace HVACoustics
                         if ((Y2 + YDim2 + eqWallThick) > Y1)
                         {
                             //Raum 1. Ord.
-                            if (XDim1 == XDim2)
+                            if (XDim1 + tolerance == XDim2 || XDim1 == XDim2 + tolerance)
                             {
                                 return Enums.TypeRoomConfig.hor;
                             }
@@ -377,6 +596,10 @@ namespace HVACoustics
                         else
                         {
                             //Raum höherer Ord.
+                            listCoorsAlongAxis = GetRoomsAlongAxis(direcX, Enums.TypeOfPoint.start, dictCoors, dictCoorsWithXDim, dictCoorsWithYDim, X1rounded, Y1rounded);
+                            indexSpaceX1 = listCoorsAlongAxis.IndexOf(X1rounded);
+                            indexSpaceX2 = listCoorsAlongAxis.IndexOf(X2rounded);
+
                             if (indexSpaceX1 == indexSpaceX2 + 2)
                             {
                                 return Enums.TypeRoomConfig.hor1Room;

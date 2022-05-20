@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NestedDictionaryLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,14 @@ namespace HVACoustics
             listWithoutDuplicates.Sort((pair1, pair2) => pair1.Key.CompareTo(pair2.Key));      
         }
 
+        public static void PrintNestedDictionary(NestedDictionary<string, double, double> dictionary)
+        {
+            Console.WriteLine();
+            foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictionary)
+                foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
+                    Console.WriteLine($"{kvp1.Key}\t-\t{kvp2.Key}\t-\t{kvp2.Value}");
+            Console.WriteLine();
+        }
         public void CreateSortedListWithoutDuplicates(List<double> listEvaluatedComponents)
         {
             //var listEvaluatedComponents = evaluatedComponents.ToList();

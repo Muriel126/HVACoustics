@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="geometry3Sharp" Version="1.0.324" />
+    <PackageReference Include="NestedDictionaryLib" Version="2.0.0" />
     <PackageReference Include="Xbim.Essentials" Version="5.1.323" />
     <PackageReference Include="Xbim.Geometry.Engine.Interop" Version="5.1.403" />
     <PackageReference Include="Xbim.ModelGeometry.Scene" Version="5.1.403" />

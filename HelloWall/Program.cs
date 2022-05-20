@@ -66,8 +66,8 @@ namespace Holzbau
                Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
                string globalIdReciever = Console.ReadLine();*/
 
-                string globalIdSender = "1U9qYuLWb7dgxXzDzBsmty";
-                string globalIdReciever = "1U9qYuLWb7dgxXzDzBsmt5";
+                string globalIdSender = "188EOkmYj41AhoJC1EOfE0";
+                string globalIdReciever = "188EOkmYj41AhoJC1EOfEE";
 
                 string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
                 Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);

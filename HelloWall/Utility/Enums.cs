@@ -54,5 +54,10 @@ namespace HVACoustics
             TimberConcreteComposite,   //Holzbetonverbund
             Default
         }
+        public enum TypeOfPoint
+        {
+            start,
+            end
+        }
     }
 }
