@@ -33,6 +33,18 @@ namespace HVACoustics
         }
         public enum TypeBuildingElement
         {
+            InteriorWall,
+            PartyWall,
+            HousePartyWall,
+            ExteriorWall,
+            Floor,
+            PlumbingWall,
+            BasementWallInterior,
+            BasementWallExterior,
+            Default
+        }
+        public enum TypeSlabConstruction
+        {
             Concrete,
             SolidTimber,
             TimberJoistFloor,   //Holzbalkendecke

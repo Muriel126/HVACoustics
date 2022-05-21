@@ -68,6 +68,26 @@ namespace HVACoustics
             }
             return prodBox;
         }
+        public XbimRect3D CreateBoundingBoxAroundBuildingElement(IfcStore model, IIfcBuildingElement element)
+        {
+            //https://github.com/xBimTeam/XbimAnalysis/blob/develop/Xbim.Analysis/Spatial/XbimAABBoxAnalyser.cs
+            Xbim3DModelContext context = new Xbim3DModelContext(model);
+            context.CreateContext();
+
+            XbimRect3D prodBox = XbimRect3D.Empty;
+            foreach (var shp in context.ShapeInstancesOf(element))
+            {
+                //bounding boxes are lightweight and are produced when geometry is created at first place
+
+                //get or cast to BBox
+                var bb = shp.BoundingBox;
+                bb = XbimRect3D.TransformBy(bb, shp.Transformation);
+                if (prodBox.IsEmpty) prodBox = bb; else prodBox.Union(bb);
+
+                //add every BBox to the world to get the size and position of the world
+            }
+            return prodBox;
+        }
     }
 
     

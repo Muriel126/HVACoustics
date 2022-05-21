@@ -66,16 +66,16 @@ namespace Holzbau
                Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
                string globalIdReciever = Console.ReadLine();*/
 
-                string globalIdSender = "188EOkmYj41AhoJC1EOfE0";
-                string globalIdReciever = "188EOkmYj41AhoJC1EOfEE";
+                //string globalIdSender = "188EOkmYj41AhoJC1EOfE0";
+                //string globalIdReciever = "188EOkmYj41AhoJC1EOfEE";
 
-                string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
-                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);
-                Console.ReadKey();
+                //string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
+                //Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);
+                //Console.ReadKey();
 
-                string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
+                string globalIdConnectedBuildingElement = "0K8HxGmSX0h99vKkLD8jdj";
                 
-                string typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
+                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
                 Console.WriteLine("The type of the building element is: {0} \n", typeOfBuildingElement);
                 Console.ReadKey();
 
