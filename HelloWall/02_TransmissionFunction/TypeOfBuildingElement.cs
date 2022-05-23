@@ -10,27 +10,44 @@ using Xbim.Ifc4.MeasureResource;
 using Xbim.Ifc4.ProductExtension;
 using static HVACoustics.TypeOfBuildingElement;
 
+
 namespace HVACoustics
 {
     class TypeOfBuildingElement
     {
         public static Enums.TypeDirec Direc { get; set; }
+        
 
         public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
         {
             var geo = new GeometryHandler();
 
-            List<string> listBoundedSpaces = new List<string>();
-            Dictionary<string, Enums.TypeDirec> dictSpaceDirec = new Dictionary<string, Enums.TypeDirec>();
             IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
+            List<string> listBoundedSpaces = new List<string>();
+            List<string> controlListBoundedSpaces = new List<string>();
+            Dictionary<string, Enums.TypeDirec> dictSpaceDirec = new Dictionary<string, Enums.TypeDirec>();
+            Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
+            
+            //Geometrie des Bauteils über eine BoundingBox feststellen
             XbimRect3D bbElement = geo.CreateBoundingBoxAroundBuildingElement(model, theElement);
             var xElement = bbElement.X;
             var yElement = bbElement.Y;
             var xDimElement = bbElement.SizeX;
             var yDimElement = bbElement.SizeY;
 
-            //typeOfBuildingElement = theElement.ObjectType.ToString();  //nach Revit-Familien benannt
+            //im ersten Schritt prüfen, ob es sich um eine Decke/Boden handelt über die Klasse IfcSlab oder IfcSlabStandardCase
+            string completeXbimClass = theElement.GetType().ToString();
+            var partsOfClassName = completeXbimClass.Split('.');
+            var length = completeXbimClass.Split('.').Length;
+            var elementClass = partsOfClassName[length-1];
+            if (elementClass.ToString() == "IfcSlab"|| elementClass.ToString() == "IfcSlabStandardCase")
+            {
+                return Enums.TypeBuildingElement.Floor;
+            }
 
+            //im nächsten Schritt werden nacheinander die verschiedenen Wandarten geprüft
+            //zunächst wird geprüft, ob es sich um eine Außenwand handelt, indem die die Lage der angrenzenden Räume betrachtet wird
+            //liegen alle auf einer Seite des Elements, handelt es sich um eine Außenwand
             var boundaries = theElement.ProvidesBoundaries;
             foreach(var b in boundaries)
             {
@@ -77,16 +94,11 @@ namespace HVACoustics
                 dictSpaceDirec.Add(id, Direc);
             }
             int numOfSpaces = listBoundedSpaces.Count();
-            foreach (KeyValuePair<string, Enums.TypeDirec> kvp in dictSpaceDirec)
-            {
-                Console.WriteLine("{0},  {1}", kvp.Key, kvp.Value);
-            }
 
             var firstEntry = dictSpaceDirec[listBoundedSpaces[0]];
-            Console.WriteLine(firstEntry);
+
             for (int i=0; i < numOfSpaces; i++)
             {
-                Console.WriteLine(dictSpaceDirec[listBoundedSpaces[i]]);
                 if (dictSpaceDirec[listBoundedSpaces[i]] != firstEntry)
                 {
                     break;
@@ -97,20 +109,9 @@ namespace HVACoustics
                 }
 
             }
-
-            var references = theElement.ReferencedInStructures;
-            foreach (var v in references)
-            {
-                if (v == null)
-                {
-                    Console.WriteLine("GOT YA!");
-                }
-                
-            }
-
             /*var properties = theElement.IsDefinedBy.Where(r => r.RelatingPropertyDefinition is IIfcPropertySet)
-                .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
-                .OfType<IIfcPropertySingleValue>();
+                    .SelectMany(r => ((IIfcPropertySet)r.RelatingPropertyDefinition).HasProperties)
+                    .OfType<IIfcPropertySingleValue>();
 
             foreach (var p in properties)
             {
@@ -124,11 +125,52 @@ namespace HVACoustics
                 }   
             }*/
 
-            IIfcBuildingStorey storey = theElement.IsContainedIn as IfcBuildingStorey;
-            var building = storey.Decomposes.Select(x => x.RelatingObject as IIfcBuilding);
-            var numberOfBuildings = building.Count();
+            //Überprüfung Gebäudetrennwand, wenn nicht dann als nächstes Wohnungstrennwand
+            var references = theElement.ReferencedInStructures;
+            if (references.Any() == true)
+            {
+                return Enums.TypeBuildingElement.HousePartyWall;
+            }
+            else
+            {
+                var relZones = model.Instances.OfType<IIfcRelAssignsToGroup>().Where(r => r.RelatingGroup is IIfcZone).ToList();
+                foreach (var zone in relZones)
+                {
+                    foreach (var space in zone.RelatedObjects)
+                    {
+                        dictZoneSpace.Add(space.GlobalId, zone.RelatingGroup.Name);
+                    }
+                }
+                foreach (KeyValuePair<string, string> kvp in dictZoneSpace)
+                {
+                    Console.WriteLine("{0} inherits {1}", kvp.Key, kvp.Value);
+                }
+                var firstEntryZones = dictZoneSpace[listBoundedSpaces[0]];
+                for (int i = 0; i < numOfSpaces; i++)
+                {
+                    if (firstEntryZones == dictZoneSpace[listBoundedSpaces[i]])
+                    {
+                        controlListBoundedSpaces.Add(listBoundedSpaces[i]); 
+                    }                   
+                }
+                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count())
+                {
+                    return Enums.TypeBuildingElement.InteriorWall;
+                }
+                else
+                {
+                    return Enums.TypeBuildingElement.PartyWall;
+                }
+            }
+        }
 
-            return Enums.TypeBuildingElement.Default;
+        public static string GetDefiningTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
+        {
+            IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
+
+            var definingTypeOfBuildingElement = theElement.ObjectType.ToString();  //nach Revit-Familien benannt
+
+            return definingTypeOfBuildingElement;
         }
     }
 }

@@ -23,6 +23,11 @@ namespace Holzbau
 {
     class Program
     {
+        public static string globalIdSource {get; set;}
+        public static string globalIdSender { get; set; }
+        public static string globalIdReciever { get; set; }
+        public static string globalIdConnectedBuildingElement { get; set; }
+
         static int Main()
         {
 
@@ -38,10 +43,10 @@ namespace Holzbau
                 EditorsOrganisationName = "TH Rosenheim"
             };
 
-            using (var model = IfcStore.Open(fileName, editor))
+           /* using (var model = IfcStore.Open(fileName, editor))
             {
 
-                /*Console.WriteLine("First of all we create the zones in the building. How many zones do you want to create?");
+                Console.WriteLine("First of all we create the zones in the building. How many zones do you want to create?");
                 int numberOfZones = int.Parse(Console.ReadLine());
                 int i = 0;
                 while (i < numberOfZones)
@@ -51,39 +56,42 @@ namespace Holzbau
                 }
 
 
-               Console.WriteLine("Now we need to create a relation between the source and the connected building elements.");
-               //hier auch mehrere Quellen abfragen?
-               //Raum mit Quelle auslesen ( oder optional abfragen ?)
-               Source.GetRoomWithSource(model);
-               string globalIdSource = Source.globalIdSource;
-               string globalIdSender = Source.globalIdSenderRoom;
+                Console.WriteLine("Now we need to create a relation between the source and the connected building elements.");
+                //hier auch mehrere Quellen abfragen?
+                //Raum mit Quelle auslesen ( oder optional abfragen ?)
+                Source.GetRoomWithSource(model);
+                globalIdSource = Source.globalIdSource;
+                globalIdSender = Source.globalIdSenderRoom;
 
-               //Beziehung Quelle Bauteil erstellen
-               Source.CreateRelSourceToBuildingElement(model, globalIdSource);
-               string globalIdConnectedBuildingElement = Source.globalIdConnectedBuildingElement1;
+                //Beziehung Quelle Bauteil erstellen
+                Source.CreateRelSourceToBuildingElement(model, globalIdSource);
+                globalIdConnectedBuildingElement = Source.globalIdConnectedBuildingElement1;
 
-               //Raumkonfiguration feststellen
-               Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
-               string globalIdReciever = Console.ReadLine();*/
+                //Raumkonfiguration feststellen
+                Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
+                globalIdReciever = Console.ReadLine();
 
+                model.SaveAs(fileNameNew);
+            }*/
+            using (var model2 = IfcStore.Open(fileNameNew, editor))
+            {
                 //string globalIdSender = "188EOkmYj41AhoJC1EOfE0";
                 //string globalIdReciever = "188EOkmYj41AhoJC1EOfEE";
 
                 //string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
                 //Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);
                 //Console.ReadKey();
+                string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
 
-                string globalIdConnectedBuildingElement = "0K8HxGmSX0h99vKkLD8jdj";
-                
-                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
+                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement);
                 Console.WriteLine("The type of the building element is: {0} \n", typeOfBuildingElement);
                 Console.ReadKey();
 
                 Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
-                Enums.TypeBuildingConstruction constructionType = ConstructionOfBuildingElements.GetConstruction(model, globalIdConnectedBuildingElement);
+                Enums.TypeBuildingConstruction constructionType = ConstructionOfBuildingElements.GetConstruction(model2, globalIdConnectedBuildingElement);
                 Console.WriteLine("The construction type is: {0}", constructionType);
 
-                model.SaveAs(fileNameNew);
+
                 return 0;
             }
         }

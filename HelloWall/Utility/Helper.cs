@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xbim.Ifc4.Interfaces;
 
 namespace HVACoustics
 {
@@ -25,6 +26,7 @@ namespace HVACoustics
                     Console.WriteLine($"{kvp1.Key}\t-\t{kvp2.Key}\t-\t{kvp2.Value}");
             Console.WriteLine();
         }
+
         public void CreateSortedListWithoutDuplicates(List<double> listEvaluatedComponents)
         {
             //var listEvaluatedComponents = evaluatedComponents.ToList();
