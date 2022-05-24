@@ -84,7 +84,7 @@ namespace Holzbau
                 string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
 
                 Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement);
-                Console.WriteLine("The type of the building element is: {0} \n", typeOfBuildingElement);
+                Console.WriteLine("The type of the building element is: {0} ", typeOfBuildingElement);
                 Console.ReadKey();
 
                 Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");

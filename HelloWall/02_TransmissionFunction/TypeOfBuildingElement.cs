@@ -16,6 +16,7 @@ namespace HVACoustics
     class TypeOfBuildingElement
     {
         public static Enums.TypeDirec Direc { get; set; }
+        public static bool Basement { get; set; }
         
 
         public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
@@ -40,7 +41,7 @@ namespace HVACoustics
             var partsOfClassName = completeXbimClass.Split('.');
             var length = completeXbimClass.Split('.').Length;
             var elementClass = partsOfClassName[length-1];
-            if (elementClass.ToString() == "IfcSlab"|| elementClass.ToString() == "IfcSlabStandardCase")
+            if (elementClass.ToString() == "IfcSlab" || elementClass.ToString() == "IfcSlabStandardCase")
             {
                 return Enums.TypeBuildingElement.Floor;
             }
@@ -48,16 +49,27 @@ namespace HVACoustics
             //im nächsten Schritt werden nacheinander die verschiedenen Wandarten geprüft
             //zunächst wird geprüft, ob es sich um eine Außenwand handelt, indem die die Lage der angrenzenden Räume betrachtet wird
             //liegen alle auf einer Seite des Elements, handelt es sich um eine Außenwand
+            var storey = theElement.IsContainedIn as IfcBuildingStorey;
+            if (storey.Elevation < 0)
+            {
+                Basement = true;
+            }
+
             var boundaries = theElement.ProvidesBoundaries;
             foreach(var b in boundaries)
             {
                 IfcSpace space = b.RelatingSpace as IfcSpace;
                 listBoundedSpaces.Add(space.GlobalId);
             }
+            if (listBoundedSpaces.Any() == false && Basement == true)
+            {
+                return Enums.TypeBuildingElement.BasementWallExterior;
+            }
             if (listBoundedSpaces.Any() == false)
             {
                 return Enums.TypeBuildingElement.ExteriorWall;
             }
+
             foreach (var id in listBoundedSpaces)
             {
                 IIfcSpace space = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == id);
@@ -103,6 +115,10 @@ namespace HVACoustics
                 {
                     break;
                 }
+                if (i == numOfSpaces - 1 && Basement == true)
+                {
+                    return Enums.TypeBuildingElement.BasementWallExterior;
+                }
                 if (i == numOfSpaces-1)
                 {
                     return Enums.TypeBuildingElement.ExteriorWall;
@@ -141,10 +157,6 @@ namespace HVACoustics
                         dictZoneSpace.Add(space.GlobalId, zone.RelatingGroup.Name);
                     }
                 }
-                foreach (KeyValuePair<string, string> kvp in dictZoneSpace)
-                {
-                    Console.WriteLine("{0} inherits {1}", kvp.Key, kvp.Value);
-                }
                 var firstEntryZones = dictZoneSpace[listBoundedSpaces[0]];
                 for (int i = 0; i < numOfSpaces; i++)
                 {
@@ -152,6 +164,10 @@ namespace HVACoustics
                     {
                         controlListBoundedSpaces.Add(listBoundedSpaces[i]); 
                     }                   
+                }
+                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count() && Basement == true)
+                {
+                    return Enums.TypeBuildingElement.BasementWallInterior;
                 }
                 if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count())
                 {
