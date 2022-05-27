@@ -19,28 +19,102 @@ namespace HVACoustics
         public static bool Basement { get; set; }
         
 
-        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
+        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
         {
             var geo = new GeometryHandler();
+            var c = new ConstructionOfBuildingElements();
 
             IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
+            IIfcMaterialLayerSet layerSetTheElement;
+            IIfcMaterialLayerSet layerSetRecieverElement;
             List<string> listBoundedSpaces = new List<string>();
             List<string> controlListBoundedSpaces = new List<string>();
+            List<string> boundedElements = new List<string>();
             Dictionary<string, Enums.TypeDirec> dictSpaceDirec = new Dictionary<string, Enums.TypeDirec>();
             Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
-            
+
+            double xE = new double();
+            double yE = new double();
+
             //Geometrie des Bauteils über eine BoundingBox feststellen
             XbimRect3D bbElement = geo.CreateBoundingBoxAroundBuildingElement(model, theElement);
             var xElement = bbElement.X;
             var yElement = bbElement.Y;
             var xDimElement = bbElement.SizeX;
             var yDimElement = bbElement.SizeY;
-
-            //im ersten Schritt prüfen, ob es sich um eine Decke/Boden handelt über die Klasse IfcSlab oder IfcSlabStandardCase
+            layerSetTheElement = c.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
+            //Console.WriteLine(layerSetTheElement);
             string completeXbimClass = theElement.GetType().ToString();
             var partsOfClassName = completeXbimClass.Split('.');
             var length = completeXbimClass.Split('.').Length;
-            var elementClass = partsOfClassName[length-1];
+            var elementClass = partsOfClassName[length - 1];
+
+            //für die vertikale Konfiguration und insbesondere das Kellergeschoss muss das Material vom unten liegenden Bauteil mit dem drüber liegenden Bauteil verglichen werden
+            //dafür wird an dieser Stelle das Bauteil aus dem Empfangsraum gesucht, dass über dem angeregten Bauteil liegt
+            IIfcSpace recieverSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdReciever);
+            var relBoundedElements = recieverSpace.BoundedBy;
+            var boundedElement = relBoundedElements.Select(x => x.RelatedBuildingElement);
+            if (roomConfig == Enums.TypeRoomConfig.ver)  //auch andere vertikale Konfigurationen
+            {
+                foreach (var e in boundedElement)
+                {
+                    XbimRect3D bbE = geo.CreateBoundingBoxAroundBuildingElement(model, (IIfcBuildingElement)e);
+                    xE = bbE.X;
+                    yE = bbE.Y;
+
+                    string completeXbimClass2 = boundedElement.GetType().ToString();
+                    var partsOfClassName2 = completeXbimClass2.Split('.');
+                    var length2 = completeXbimClass2.Split('.').Length;
+                    var elementClass2 = partsOfClassName2[length2 - 1];
+
+                    if (xElement - 0.15 < xE && xElement + 0.15 > xE || yElement - 0.15 < yE && yElement + 0.15 > yE && elementClass == elementClass2)
+                    {
+                        if (boundedElements.Contains(e.GlobalId) == false)
+                        {
+                            boundedElements.Add(e.GlobalId);
+                            Console.WriteLine("test");
+                            layerSetRecieverElement = c.GetMaterialLayerSet(model, e.GlobalId);
+                            if (layerSetTheElement == layerSetRecieverElement)
+                            {
+                                break;
+                            }
+                            else if (layerSetTheElement != layerSetRecieverElement)
+                            {
+                                Console.WriteLine("Are the two building elements of the same construction type?");
+                                Console.WriteLine("First building element:");
+                                foreach (IIfcMaterialLayer materialLayer in layerSetTheElement.MaterialLayers)
+                                {
+
+                                    Console.WriteLine("--------------------------------");
+                                    Console.WriteLine("Layer: " + materialLayer.Name);
+                                    Console.WriteLine("Material Name: " + materialLayer.Material.Name);
+                                }
+                                Console.WriteLine("\n Second building element:");
+                                foreach (IIfcMaterialLayer materialLayer in layerSetRecieverElement.MaterialLayers)
+                                {
+
+                                    Console.WriteLine("--------------------------------");
+                                    Console.WriteLine("Layer: " + materialLayer.Name);
+                                    Console.WriteLine("Material Name: " + materialLayer.Material.Name);
+                                }
+                                Console.WriteLine("\n If they are of the same construction type, enter Y if not enter N");  // noch konkreter formulieren?
+                                var input = Console.ReadLine();
+                                if (input == "Y" || input == "y")
+                                {
+                                    break;
+                                }
+                                if (input == "N" || input == "n")
+                                {
+                                    Basement = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //im ersten Schritt prüfen, ob es sich um eine Decke/Boden handelt über die Klasse IfcSlab oder IfcSlabStandardCase
+
             if (elementClass.ToString() == "IfcSlab" || elementClass.ToString() == "IfcSlabStandardCase")
             {
                 return Enums.TypeBuildingElement.Floor;
@@ -50,11 +124,11 @@ namespace HVACoustics
             //zunächst wird geprüft, ob es sich um eine Außenwand handelt, indem die die Lage der angrenzenden Räume betrachtet wird
             //liegen alle auf einer Seite des Elements, handelt es sich um eine Außenwand
             var storey = theElement.IsContainedIn as IfcBuildingStorey;
-            if (storey.Elevation < 0)
+            /*if (storey.Elevation < 0)
             {
                 Basement = true;
-            }
-
+            }*/
+            
             var boundaries = theElement.ProvidesBoundaries;
             foreach(var b in boundaries)
             {
@@ -165,7 +239,7 @@ namespace HVACoustics
                         controlListBoundedSpaces.Add(listBoundedSpaces[i]); 
                     }                   
                 }
-                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count() && Basement == true)
+                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count())// && Basement == true)
                 {
                     return Enums.TypeBuildingElement.BasementWallInterior;
                 }

@@ -200,29 +200,7 @@ namespace HVACoustics
                     dictCoors.Add(v.GlobalId, Math.Round(bbSpace.X, 0), Math.Round(bbSpace.Y, 0));
                     dictCoorsWithXDim.Add(v.GlobalId, Math.Round(bbSpace.X, 0) + Math.Round(bbSpace.SizeX,0), Math.Round(bbSpace.Y, 0));
                     dictCoorsWithYDim.Add(v.GlobalId, Math.Round(bbSpace.X, 0) , Math.Round(bbSpace.Y, 0) + Math.Round(bbSpace.SizeY, 0));
-
-                    /*bool keyXExists = listCoorsInOffsetXDirec.Contains(Math.Round(bbSpace.X, 0));
-                    bool keyYExists = listCoorsInOffsetYDirec.Contains(Math.Round(bbSpace.Y, 0));
-
-                    if (keyXExists)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        listCoorsInOffsetXDirec.Add(Math.Round(bbSpace.X, 0));
-                    }
-                    if (keyYExists)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        listCoorsInOffsetYDirec.Add(Math.Round(bbSpace.Y, 0));
-                    }*/
                 }
-                //listCoorsInOffsetXDirec = listCoorsInOffsetXDirec.OrderBy(obj => obj).ToList();
-                //listCoorsInOffsetYDirec = listCoorsInOffsetYDirec.OrderBy(obj => obj).ToList();
 
                 //Helper.PrintNestedDictionary(dictCoors);
                 foreach (var x in listCoorsInOffsetXDirec)
@@ -256,10 +234,6 @@ namespace HVACoustics
             X2rounded = Math.Round(prodBox2.Location.X, 0);
             Y2 = Math.Round(prodBox2.Location.Y, 2);
             Y2rounded = Math.Round(prodBox2.Location.Y, 0);
-            /*indexSpaceX1 = listCoorsInOffsetXDirec.IndexOf(X1rounded);
-            indexSpaceY1 = listCoorsInOffsetYDirec.IndexOf(Y1rounded);
-            indexSpaceX2 = listCoorsInOffsetXDirec.IndexOf(X2rounded);
-            indexSpaceY2 = listCoorsInOffsetYDirec.IndexOf(Y2rounded);*/
 
             //now get the direction of Shape of the space
             var rep1 = sender.Representation.Representations;

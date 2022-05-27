@@ -75,15 +75,15 @@ namespace Holzbau
             }*/
             using (var model2 = IfcStore.Open(fileNameNew, editor))
             {
-                //string globalIdSender = "188EOkmYj41AhoJC1EOfE0";
-                //string globalIdReciever = "188EOkmYj41AhoJC1EOfEE";
+                string globalIdSender = "188EOkmYj41AhoJC1EOfEE";
+                string globalIdReciever = "1U9qYuLWb7dgxXzDzBsmtr";
 
-                //string roomConfig = RoomConfigurations.GetRoomConfiguration(model, globalIdSender, globalIdReciever).ToString();
-                //Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig);
+                var roomConfig = RoomConfigurations.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
+                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
                 //Console.ReadKey();
                 string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
 
-                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement);
+                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement, globalIdReciever, roomConfig);
                 Console.WriteLine("The type of the building element is: {0} ", typeOfBuildingElement);
                 Console.ReadKey();
 
