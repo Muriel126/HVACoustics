@@ -5,29 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Xbim.Ifc;
 using Xbim.Ifc4.Interfaces;
+using Xbim.Ifc4.SharedBldgElements;
 
 namespace HVACoustics
 {
     class ConstructionOfBuildingElements
     {
-        public IIfcMaterialLayerSet GetMaterialLayerSet(IfcStore model, string globalIdConnectedBuildingElement)
-        {
-            IIfcElement theWall = model.Instances.FirstOrDefault<IIfcElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
-            IIfcMaterialLayerSetUsage AllLayerSetsUsage = theWall.Material as IIfcMaterialLayerSetUsage;
-            IIfcMaterialLayerSet materialLayerSet = AllLayerSetsUsage.ForLayerSet;
-
-            return materialLayerSet;
-        }
 
         public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement)
         {
-            var c = new ConstructionOfBuildingElements();
-            IIfcMaterialLayerSet materialLayerSet = c.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
+            var sem = new SemanticHandler.SemanticHandler();
+            IIfcMaterialLayerSet materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
 
-            List<string> MaterialList = new List<string>();
-            List<string> ThicknessList = new List<string>();
-
-
+            var type = sem.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
+            Console.WriteLine("The predefinied type of the building element is: {0}\n", type);
+            
             Console.WriteLine("The material layer set of the building element consists of the following materials:");
             foreach (IIfcMaterialLayer materialLayer in materialLayerSet.MaterialLayers)
             {

@@ -22,7 +22,7 @@ namespace HVACoustics
         public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
         {
             var geo = new GeometryHandler();
-            var c = new ConstructionOfBuildingElements();
+            var sem = new SemanticHandler.SemanticHandler();
 
             IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
             IIfcMaterialLayerSet layerSetTheElement;
@@ -42,19 +42,17 @@ namespace HVACoustics
             var yElement = bbElement.Y;
             var xDimElement = bbElement.SizeX;
             var yDimElement = bbElement.SizeY;
-            layerSetTheElement = c.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
+            layerSetTheElement = sem.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
             //Console.WriteLine(layerSetTheElement);
-            string completeXbimClass = theElement.GetType().ToString();
-            var partsOfClassName = completeXbimClass.Split('.');
-            var length = completeXbimClass.Split('.').Length;
-            var elementClass = partsOfClassName[length - 1];
+
+            var elementClass = sem.GetBuildingElementClassXbim(model, theElement);
 
             //für die vertikale Konfiguration und insbesondere das Kellergeschoss muss das Material vom unten liegenden Bauteil mit dem drüber liegenden Bauteil verglichen werden
             //dafür wird an dieser Stelle das Bauteil aus dem Empfangsraum gesucht, dass über dem angeregten Bauteil liegt
             IIfcSpace recieverSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdReciever);
             var relBoundedElements = recieverSpace.BoundedBy;
             var boundedElement = relBoundedElements.Select(x => x.RelatedBuildingElement);
-            if (roomConfig == Enums.TypeRoomConfig.ver)  //auch andere vertikale Konfigurationen
+            if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff)  //auch andere vertikale Konfigurationen
             {
                 foreach (var e in boundedElement)
                 {
@@ -62,18 +60,14 @@ namespace HVACoustics
                     xE = bbE.X;
                     yE = bbE.Y;
 
-                    string completeXbimClass2 = boundedElement.GetType().ToString();
-                    var partsOfClassName2 = completeXbimClass2.Split('.');
-                    var length2 = completeXbimClass2.Split('.').Length;
-                    var elementClass2 = partsOfClassName2[length2 - 1];
+                    var elementClass2 = sem.GetBuildingElementClassXbim(model,(IIfcBuildingElement)boundedElement);
 
                     if (xElement - 0.15 < xE && xElement + 0.15 > xE || yElement - 0.15 < yE && yElement + 0.15 > yE && elementClass == elementClass2)
                     {
                         if (boundedElements.Contains(e.GlobalId) == false)
                         {
                             boundedElements.Add(e.GlobalId);
-                            Console.WriteLine("test");
-                            layerSetRecieverElement = c.GetMaterialLayerSet(model, e.GlobalId);
+                            layerSetRecieverElement = sem.GetMaterialLayerSet(model, e.GlobalId);
                             if (layerSetTheElement == layerSetRecieverElement)
                             {
                                 break;
@@ -84,20 +78,18 @@ namespace HVACoustics
                                 Console.WriteLine("First building element:");
                                 foreach (IIfcMaterialLayer materialLayer in layerSetTheElement.MaterialLayers)
                                 {
-
                                     Console.WriteLine("--------------------------------");
                                     Console.WriteLine("Layer: " + materialLayer.Name);
                                     Console.WriteLine("Material Name: " + materialLayer.Material.Name);
                                 }
-                                Console.WriteLine("\n Second building element:");
+                                Console.WriteLine("\nSecond building element:");
                                 foreach (IIfcMaterialLayer materialLayer in layerSetRecieverElement.MaterialLayers)
                                 {
-
                                     Console.WriteLine("--------------------------------");
                                     Console.WriteLine("Layer: " + materialLayer.Name);
                                     Console.WriteLine("Material Name: " + materialLayer.Material.Name);
                                 }
-                                Console.WriteLine("\n If they are of the same construction type, enter Y if not enter N");  // noch konkreter formulieren?
+                                Console.WriteLine("\nIf they are of the same construction type, enter Y if not enter N");  // noch konkreter formulieren?
                                 var input = Console.ReadLine();
                                 if (input == "Y" || input == "y")
                                 {
@@ -114,7 +106,6 @@ namespace HVACoustics
             }
 
             //im ersten Schritt prüfen, ob es sich um eine Decke/Boden handelt über die Klasse IfcSlab oder IfcSlabStandardCase
-
             if (elementClass.ToString() == "IfcSlab" || elementClass.ToString() == "IfcSlabStandardCase")
             {
                 return Enums.TypeBuildingElement.Floor;

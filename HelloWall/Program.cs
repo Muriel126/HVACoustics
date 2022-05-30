@@ -75,17 +75,17 @@ namespace Holzbau
             }*/
             using (var model2 = IfcStore.Open(fileNameNew, editor))
             {
-                string globalIdSender = "188EOkmYj41AhoJC1EOfEE";
-                string globalIdReciever = "1U9qYuLWb7dgxXzDzBsmtr";
+                //string globalIdSender = "188EOkmYj41AhoJC1EOfEE";
+                //string globalIdReciever = "1U9qYuLWb7dgxXzDzBsmtr";
 
-                var roomConfig = RoomConfigurations.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
-                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
+               // var roomConfig = RoomConfigurations.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
+               // Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
                 //Console.ReadKey();
-                string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF16";
+                string globalIdConnectedBuildingElement = "0i8nVeTTf6ox2YVT2SRF1u";
 
-                Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement, globalIdReciever, roomConfig);
-                Console.WriteLine("The type of the building element is: {0} ", typeOfBuildingElement);
-                Console.ReadKey();
+               // Enums.TypeBuildingElement typeOfBuildingElement = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement, globalIdReciever, roomConfig);
+               // Console.WriteLine("The type of the building element is: {0} ", typeOfBuildingElement);
+               // Console.ReadKey();
 
                 Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
                 Enums.TypeBuildingConstruction constructionType = ConstructionOfBuildingElements.GetConstruction(model2, globalIdConnectedBuildingElement);
