@@ -647,7 +647,7 @@ namespace HVACoustics
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Ypos)
                     {
-                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
+                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + eqWallThick) > X1) && ((X2 + XDim2) < X1))
                         {
                             return Enums.TypeRoomConfig.horOff;
                         }
@@ -676,7 +676,8 @@ namespace HVACoustics
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Yneg)
                     {
-                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
+                        Console.WriteLine("test");
+                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + eqWallThick) > X1) && ((X2 + XDim2) < X1))
                         {
                             return Enums.TypeRoomConfig.horOff;
                         }
