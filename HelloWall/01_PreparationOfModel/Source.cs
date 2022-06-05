@@ -12,6 +12,8 @@ namespace HVACoustics
     class Source
     {
         public static string globalIdConnectedBuildingElement1 { get; set; }
+        public static string globalIdConnectedBuildingElement2 { get; set; }
+        public static string globalIdConnectedBuildingElement3 { get; set; }
         public static string globalIdSource { get; set; }
         public static string globalIdSenderRoom { get; set; }
 
@@ -28,7 +30,7 @@ namespace HVACoustics
             return globalIdSenderRoom;
         }
 
-        public static IfcRelAssignsToProduct CreateRelSourceToBuildingElement(IfcStore model, string globalIdSource)
+        public static IfcRelAssignsToProduct CreateRelSourceToBuildingElement(IfcStore model, string globalIdSource, int numberOfConnectedBuildingElements)
         {
             using (var txn = model.BeginTransaction("Create relation between source and building element"))
             {
@@ -42,24 +44,23 @@ namespace HVACoustics
                 globalIdConnectedBuildingElement1 = Console.ReadLine();
                 IfcBuildingElement buildingElement1 = model.Instances.FirstOrDefault<IfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement1);
 
-                /*Console.WriteLine("Enter the second connected building element to this source. If there is no further element type \"n\":");
-                string globalIdConnectedBuildingElement2 = Console.ReadLine();
-
-                if (globalIdConnectedBuildingElement2 != "n")
+                if (numberOfConnectedBuildingElements > 1)
                 {
-                    
+                    Console.WriteLine("Enter the second connected building element to this source:");
+                    string globalIdConnectedBuildingElement2 = Console.ReadLine();
                     IfcBuildingElement buildingElement2 = model.Instances.FirstOrDefault<IfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement2);
-                    
-                    Console.WriteLine("Enter the third connected building element to this source. If there is no further element type \"n\":");
-                    string globalIdConnectedBuildingElement3 = Console.ReadLine();
-                    
-                    if (globalIdConnectedBuildingElement3 != "n")
+
+                    if (numberOfConnectedBuildingElements > 2)
                     {
+                        Console.WriteLine("Enter the third connected building element to this source:");
+                        string globalIdConnectedBuildingElement3 = Console.ReadLine();
+
                         IfcBuildingElement buildingElement3 = model.Instances.FirstOrDefault<IfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement3);
 
                         relAssigns.RelatedObjects.Add(buildingElement1);
                         relAssigns.RelatedObjects.Add(buildingElement2);
                         relAssigns.RelatedObjects.Add(buildingElement3);
+                        
                     }
                     else
                     {
@@ -68,9 +69,9 @@ namespace HVACoustics
                     }
                 }
                 else
-                {*/
-                relAssigns.RelatedObjects.Add(buildingElement1);
-                //}
+                {
+                    relAssigns.RelatedObjects.Add(buildingElement1);
+                }
                 txn.Commit();
                 return relAssigns;
             }

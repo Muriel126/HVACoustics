@@ -19,7 +19,7 @@ namespace HVACoustics
         public static bool Basement { get; set; }
         
 
-        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
+        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdSender, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
         {
             var geo = new GeometryHandler();
             var sem = new SemanticHandler.SemanticHandler();
@@ -29,7 +29,7 @@ namespace HVACoustics
             IIfcMaterialLayerSet layerSetRecieverElement;
             List<string> listBoundedSpaces = new List<string>();
             List<string> controlListBoundedSpaces = new List<string>();
-            List<string> boundedElements = new List<string>();
+            List<string> boundedElementsReciever = new List<string>();
             Dictionary<string, Enums.TypeDirec> dictSpaceDirec = new Dictionary<string, Enums.TypeDirec>();
             Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
 
@@ -50,23 +50,26 @@ namespace HVACoustics
             //für die vertikale Konfiguration und insbesondere das Kellergeschoss muss das Material vom unten liegenden Bauteil mit dem drüber liegenden Bauteil verglichen werden
             //dafür wird an dieser Stelle das Bauteil aus dem Empfangsraum gesucht, dass über dem angeregten Bauteil liegt
             IIfcSpace recieverSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdReciever);
-            var relBoundedElements = recieverSpace.BoundedBy;
-            var boundedElement = relBoundedElements.Select(x => x.RelatedBuildingElement);
+            var relBoundedElementsRecíever = recieverSpace.BoundedBy;
+            var boundedElementsRecíever = relBoundedElementsRecíever.Select(x => x.RelatedBuildingElement);
+
+            sem.GetConnectingBuildingElementOfTwoSpaces(model, globalIdSender, globalIdReciever);
+
             if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff)  //auch andere vertikale Konfigurationen
             {
-                foreach (var e in boundedElement)
+                foreach (var e in boundedElementsRecíever)
                 {
                     XbimRect3D bbE = geo.CreateBoundingBoxAroundBuildingElement(model, (IIfcBuildingElement)e);
                     xE = bbE.X;
                     yE = bbE.Y;
 
-                    var elementClass2 = sem.GetBuildingElementClassXbim(model,(IIfcBuildingElement)boundedElement);
+                    var elementClass2 = sem.GetBuildingElementClassXbim(model,(IIfcBuildingElement)e);
 
                     if (xElement - 0.15 < xE && xElement + 0.15 > xE || yElement - 0.15 < yE && yElement + 0.15 > yE && elementClass == elementClass2)
                     {
-                        if (boundedElements.Contains(e.GlobalId) == false)
+                        if (boundedElementsReciever.Contains(e.GlobalId) == false)
                         {
-                            boundedElements.Add(e.GlobalId);
+                            boundedElementsReciever.Add(e.GlobalId);
                             layerSetRecieverElement = sem.GetMaterialLayerSet(model, e.GlobalId);
                             if (layerSetTheElement == layerSetRecieverElement)
                             {
@@ -230,7 +233,7 @@ namespace HVACoustics
                         controlListBoundedSpaces.Add(listBoundedSpaces[i]); 
                     }                   
                 }
-                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count())// && Basement == true)
+                if (listBoundedSpaces.Count() == controlListBoundedSpaces.Count() && Basement == true)
                 {
                     return Enums.TypeBuildingElement.BasementWallInterior;
                 }

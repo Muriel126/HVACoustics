@@ -48,5 +48,48 @@ namespace HVACoustics.SemanticHandler
             }
             return IfcWallTypeEnum.NOTDEFINED;
         }
+        public string GetConnectingBuildingElementOfTwoSpaces(IfcStore model, string globalIdSender, string globalIdReciever)
+        {
+            var sem = new SemanticHandler();
+
+            List<string> listBoundedElementsReciever = new List<string>();
+            List<string> listBoundedElementsSender = new List<string>();
+
+            IIfcSpace recieverSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdReciever);
+            IIfcSpace senderSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdSender);
+            var relBoundedElementsReciever = recieverSpace.BoundedBy;
+            var boundedElementRecíever = relBoundedElementsReciever.Select(x => x.RelatedBuildingElement);
+            
+            var relBoundedElementsSender = senderSpace.BoundedBy;
+            var boundedElementSender = relBoundedElementsSender.Select(x => x.RelatedBuildingElement);
+
+            foreach (var e in boundedElementRecíever)
+            {
+                var elementClass2 = sem.GetBuildingElementClassXbim(model, (IIfcBuildingElement)e);
+                //Console.WriteLine(e);
+                if (listBoundedElementsReciever.Contains(e.GlobalId) == false)
+                {
+                    listBoundedElementsReciever.Add(e.GlobalId);
+                }
+                
+            }
+            foreach (var e in boundedElementSender)
+            {
+                //Console.WriteLine(e);
+                if (listBoundedElementsSender.Contains(e.GlobalId) == false)
+                {
+                    listBoundedElementsSender.Add(e.GlobalId);
+                }
+            }
+            foreach (var s in listBoundedElementsReciever)
+            {
+                if (listBoundedElementsSender.Contains(s))
+                {
+                    //Console.WriteLine(s);
+                    return s;
+                }
+            }
+            return "default";
+        }
     }
 }
