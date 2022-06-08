@@ -60,29 +60,93 @@ namespace HVACoustics
         public static int indexSpaceY2 { get; set; }
         public static Enums.TypeOfPoint typeOfPoint { get; set; }
 
-        public static void GetGeometrySpace(IfcStore model)
+        public void GetSpecificGeometrySpace(IfcStore model, string senderID, string recieverID)
         {
-            var id = "2tbs39_az4k97nLauRotVn";
-            IfcSpace space = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == id);
+            var geo = new GeometryHandler();
 
-            var rep = space.Representation.Representations;
-            var shape = rep[0];
-            var body = shape.Items[0];
-            double X = ((IfcExtrudedAreaSolid)body).Position.Location.X;
-            double Y = ((IfcExtrudedAreaSolid)body).Position.Location.Y;
-            double XDim = ((IfcRectangleProfileDef)((IfcExtrudedAreaSolid)body).SweptArea).XDim;
-            double YDim = ((IfcRectangleProfileDef)((IfcExtrudedAreaSolid)body).SweptArea).YDim;
+            IIfcSpace sender = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == senderID);
+            IIfcSpace reciever = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == recieverID);
 
-            /*var points = ((IfcPolyline)((IfcArbitraryClosedProfileDef)((IfcExtrudedAreaSolid)body).SweptArea).OuterCurve).Points;
-            List<double> xCords = points.Select(x => x.X).ToList();
-            List<double> yCords = points.Select(x => x.Y).ToList();
+            XbimRect3D prodBox1 = geo.CreateBoundingBoxAroundSpace(model, sender);
+            XbimRect3D prodBox2 = geo.CreateBoundingBoxAroundSpace(model, reciever);
+            X1 = Math.Round(prodBox1.Location.X, 2);
+            X1rounded = Math.Round(prodBox1.Location.X, 0);
+            Y1 = Math.Round(prodBox1.Location.Y, 2);
+            Y1rounded = Math.Round(prodBox1.Location.Y, 0);
+            X2 = Math.Round(prodBox2.Location.X, 2);
+            X2rounded = Math.Round(prodBox2.Location.X, 0);
+            Y2 = Math.Round(prodBox2.Location.Y, 2);
+            Y2rounded = Math.Round(prodBox2.Location.Y, 0);
 
-            foreach (double i in xCords)
+            //now get the direction of Shape of the space
+            var rep1 = sender.Representation.Representations;
+            var shape1 = rep1[0];
+            var body1 = shape1.Items[0];
+            if (((IIfcExtrudedAreaSolid)body1).Position.RefDirection != null)
             {
-                Console.WriteLine(i);
+                direcX1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.X;
+                direcY1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.Y;
             }
-            Vector2d vec = new Vector2d(2, 4);
-            Console.WriteLine(vec);*/
+            else
+            {
+                direcX1 = 1;
+                direcY1 = 0;
+            }
+
+            if (direcX1 == 1 || direcX1 == -1)
+            {
+                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
+                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
+
+            }
+            if (direcY1 == 1 || direcY1 == -1)
+            {
+                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
+                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
+            }
+
+            var rep2 = reciever.Representation.Representations;
+            var shape2 = rep2[0];
+            var body2 = shape2.Items[0];
+            if (((IIfcExtrudedAreaSolid)body2).Position.RefDirection != null)
+            {
+                direcX2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.X;
+                direcY2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.Y;
+            }
+            else
+            {
+                direcX2 = 1;
+                direcY2 = 0;
+            }
+            if (direcX2 == 1 || direcX2 == -1)
+            {
+                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
+                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
+            }
+            if (direcY2 == 1 || direcY2 == -1)
+            {
+                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
+                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
+            }
+
+            X1EndRounded = X1rounded + Math.Round(XDim1, 0);
+            Y1EndRounded = Y1rounded + Math.Round(YDim1, 0);
+            X2EndRounded = X2rounded + Math.Round(XDim2, 0);
+            Y2EndRounded = Y2rounded + Math.Round(YDim2, 0);
+
+            /*Console.WriteLine(direcX1);
+            Console.WriteLine(direcY1);
+            Console.WriteLine(direcX2);
+            Console.WriteLine(direcY2);
+
+            Console.WriteLine(X1);
+            Console.WriteLine(Y1);
+            Console.WriteLine(XDim1);
+            Console.WriteLine(YDim1);
+            Console.WriteLine(X2);
+            Console.WriteLine(Y2);
+            Console.WriteLine(XDim2);
+            Console.WriteLine(YDim2);*/
         }
 
         public static List<double> GetRoomsAlongAxis(Enums.TypeDirec typeDirec, Enums.TypeOfPoint typeOfPoint, NestedDictionary<string, double, double> dictCoors, NestedDictionary<string, double, double> dictCoorsWithXDim, NestedDictionary<string, double, double> dictCoorsWithYDim , double X1rounded, double Y1rounded)
@@ -175,7 +239,6 @@ namespace HVACoustics
 
             List<double> listCoorsInOffsetXDirec = new List<double>();
             List<double> listCoorsInOffsetYDirec = new List<double>();
-            //Dictionary<string, double> dictSpaceCoors = new Dictionary<string, double>();
             NestedDictionary<string,double,double> dictCoors = new NestedDictionary<string, double, double>();
             NestedDictionary<string, double, double> dictCoorsWithXDim = new NestedDictionary<string, double, double>();
             NestedDictionary<string, double, double> dictCoorsWithYDim = new NestedDictionary<string, double, double>();
@@ -223,92 +286,9 @@ namespace HVACoustics
                 indexStorey2 = listStoreys.IndexOf(element);
             }
 
-            //now create a BoundingBox around the space to get the global location
-            XbimRect3D prodBox1 = geo.CreateBoundingBoxAroundSpace(model, sender);
-            XbimRect3D prodBox2 = geo.CreateBoundingBoxAroundSpace(model, reciever);
-            X1 = Math.Round(prodBox1.Location.X, 2);
-            X1rounded = Math.Round(prodBox1.Location.X, 0);
-            Y1 = Math.Round(prodBox1.Location.Y, 2);
-            Y1rounded = Math.Round(prodBox1.Location.Y, 0);
-            X2 = Math.Round(prodBox2.Location.X, 2);
-            X2rounded = Math.Round(prodBox2.Location.X, 0);
-            Y2 = Math.Round(prodBox2.Location.Y, 2);
-            Y2rounded = Math.Round(prodBox2.Location.Y, 0);
+            //now create a BoundingBox around the space to get the global location and the dimensions
+            config.GetSpecificGeometrySpace(model, senderID, recieverID);
 
-            //now get the direction of Shape of the space
-            var rep1 = sender.Representation.Representations;
-            var shape1 = rep1[0];
-            var body1 = shape1.Items[0];
-            if (((IIfcExtrudedAreaSolid)body1).Position.RefDirection != null)
-            {
-                direcX1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.X;
-                direcY1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.Y;
-            }
-            else
-            {
-                direcX1 = 1;
-                direcY1 = 0;
-            }
-
-            if (direcX1 == 1 || direcX1 == -1)
-            {
-                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
-                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
-
-            }
-            if (direcY1 == 1 || direcY1 == -1)
-            {
-                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
-                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
-            }
-
-            var rep2 = reciever.Representation.Representations;
-            var shape2 = rep2[0];
-            var body2 = shape2.Items[0];
-            if (((IIfcExtrudedAreaSolid)body2).Position.RefDirection != null)
-            {
-                direcX2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.X;
-                direcY2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.Y;
-            }
-            else
-            {
-                direcX2 = 1;
-                direcY2 = 0;
-            }
-            if (direcX2 == 1 || direcX2 == -1)
-            {
-                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
-                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
-            }
-            if (direcY2 == 1 || direcY2 == -1)
-            {
-                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
-                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
-            }
-
-            X1EndRounded = X1rounded + Math.Round(XDim1, 0);
-            Y1EndRounded = Y1rounded + Math.Round(YDim1, 0);
-            X2EndRounded = X2rounded + Math.Round(XDim2, 0);
-            Y2EndRounded = Y2rounded + Math.Round(YDim2, 0);
-            /* Console.WriteLine(direcX1);
-             Console.WriteLine(direcY1);
-             Console.WriteLine(direcX2);
-             Console.WriteLine(direcY2);*/
-
-            //Console.WriteLine(X1);
-            //Console.WriteLine(Y1);
-            //Console.WriteLine(XDim1);
-            //Console.WriteLine(YDim1);
-            //Console.WriteLine(X2);
-            //Console.WriteLine(Y2);
-            //Console.WriteLine(XDim2);
-            //Console.WriteLine(YDim2);
-            //Console.WriteLine(elevationStorey1);
-            //Console.WriteLine(elevationStorey2); 
-            //Console.WriteLine(indexSpaceX1);
-            //Console.WriteLine(indexSpaceY1);
-            //Console.WriteLine(indexSpaceX2);
-            //Console.WriteLine(indexSpaceY2);
 
             Enums.TypeRoomConfig roomConfig = new Enums.TypeRoomConfig();
 
@@ -713,8 +693,6 @@ namespace HVACoustics
 
             var direcX = geo.GetDirection(X1, X2, 0, 0);
             var direcY = geo.GetDirection(0, 0, Y1, Y2);
-            //Console.WriteLine(direcX);
-            //Console.WriteLine(direcY);
 
             if (X1 - tolerance < X2 && X1 + tolerance > X2 || X2 - tolerance < X1 && X2 + tolerance > X1) //==
             {

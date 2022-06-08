@@ -109,6 +109,7 @@ namespace HVACoustics
             }
 
             //im ersten Schritt prüfen, ob es sich um eine Decke/Boden handelt über die Klasse IfcSlab oder IfcSlabStandardCase
+
             if (elementClass.ToString() == "IfcSlab" || elementClass.ToString() == "IfcSlabStandardCase")
             {
                 return Enums.TypeBuildingElement.Floor;

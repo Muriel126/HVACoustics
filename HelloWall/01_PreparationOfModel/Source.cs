@@ -15,9 +15,9 @@ namespace HVACoustics
         public static string globalIdConnectedBuildingElement2 { get; set; }
         public static string globalIdConnectedBuildingElement3 { get; set; }
         public static string globalIdSource { get; set; }
-        public static string globalIdSenderRoom { get; set; }
+        public static string globalIdSender { get; set; }
 
-        public static string GetRoomWithSource(IfcStore model)
+        public static string GetSpaceWithSource(IfcStore model)
         {
             Console.WriteLine("Please enter the GlobalId of the source:");
             globalIdSource = Console.ReadLine();
@@ -25,9 +25,9 @@ namespace HVACoustics
 
             IfcSpace senderRoom = source.IsContainedIn as IfcSpace;
 
-            globalIdSenderRoom = senderRoom.GlobalId;
+            globalIdSender = senderRoom.GlobalId;
 
-            return globalIdSenderRoom;
+            return globalIdSender;
         }
 
         public static IfcRelAssignsToProduct CreateRelSourceToBuildingElement(IfcStore model, string globalIdSource, int numberOfConnectedBuildingElements)

@@ -11,7 +11,6 @@ namespace HVACoustics
 {
     class ConstructionOfBuildingElements
     {
-
         public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement)
         {
             var sem = new SemanticHandler.SemanticHandler();
@@ -23,28 +22,22 @@ namespace HVACoustics
             Console.WriteLine("The material layer set of the building element consists of the following materials:");
             foreach (IIfcMaterialLayer materialLayer in materialLayerSet.MaterialLayers)
             {
-                    
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine("Layer: " + materialLayer.Name);
                 Console.WriteLine("Material Name: " + materialLayer.Material.Name);
             }
-
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Now enter which type of building element the material layer set represents: ");
-
-            Console.WriteLine("a: Massivholzwand");
-            Console.WriteLine("b: einfach Ständerwerk");
-            Console.WriteLine("c: getrenntes Ständerwerk");
-            Console.WriteLine("d: einfaches Ständerwerk mit Konterlattung");
-            Console.WriteLine("e: einfach Ständerwerk Metall");
-            Console.WriteLine("f: getrenntes Ständerwerk Metall");
-            Console.WriteLine("g: Installationswand");
-            Console.WriteLine("h: Holzbalkendecke");
-            Console.WriteLine("i: Holzbetonverbund");
-
-            Console.WriteLine();
+            Console.WriteLine("a: Massivholzwand\n" +
+                              "b: einfach Ständerwerk\n" +
+                              "c: getrenntes Ständerwerk\n" +
+                              "d: einfaches Ständerwerk mit Konterlattung\n" +
+                              "e: einfach Ständerwerk Metall\n" +
+                              "f: getrenntes Ständerwerk Metall\n" +
+                              "g: Installationswand\n" +
+                              "h: Holzbalkendecke\n" +
+                              "i: Holzbetonverbund\n");
             string option = Console.ReadLine();
-
             if (option == "a")
             {
                 return Enums.TypeBuildingConstruction.SolidTimber;      
