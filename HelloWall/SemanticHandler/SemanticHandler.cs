@@ -48,7 +48,7 @@ namespace HVACoustics.SemanticHandler
             }
             return IfcWallTypeEnum.NOTDEFINED;
         }
-        public string GetConnectingBuildingElementOfTwoSpaces(IfcStore model, string globalIdSender, string globalIdReciever)
+        public string GetGlobalIdOfConnectingBuildingElementOfTwoSpaces(IfcStore model, string globalIdSender, string globalIdReciever)
         {
             var sem = new SemanticHandler();
 
@@ -57,25 +57,22 @@ namespace HVACoustics.SemanticHandler
 
             IIfcSpace recieverSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdReciever);
             IIfcSpace senderSpace = model.Instances.FirstOrDefault<IIfcSpace>(d => d.GlobalId == globalIdSender);
+
             var relBoundedElementsReciever = recieverSpace.BoundedBy;
-            var boundedElementRecíever = relBoundedElementsReciever.Select(x => x.RelatedBuildingElement);
+            var boundedElementReciever = relBoundedElementsReciever.Select(x => x.RelatedBuildingElement);
             
             var relBoundedElementsSender = senderSpace.BoundedBy;
             var boundedElementSender = relBoundedElementsSender.Select(x => x.RelatedBuildingElement);
 
-            foreach (var e in boundedElementRecíever)
+            foreach (var e in boundedElementReciever)
             {
-                var elementClass2 = sem.GetBuildingElementClassXbim(model, (IIfcBuildingElement)e);
-                //Console.WriteLine(e);
                 if (listBoundedElementsReciever.Contains(e.GlobalId) == false)
                 {
                     listBoundedElementsReciever.Add(e.GlobalId);
                 }
-                
             }
             foreach (var e in boundedElementSender)
             {
-                //Console.WriteLine(e);
                 if (listBoundedElementsSender.Contains(e.GlobalId) == false)
                 {
                     listBoundedElementsSender.Add(e.GlobalId);
@@ -85,7 +82,6 @@ namespace HVACoustics.SemanticHandler
             {
                 if (listBoundedElementsSender.Contains(s))
                 {
-                    //Console.WriteLine(s);
                     return s;
                 }
             }

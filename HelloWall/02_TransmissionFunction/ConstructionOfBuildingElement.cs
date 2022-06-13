@@ -9,15 +9,26 @@ using Xbim.Ifc4.SharedBldgElements;
 
 namespace HVACoustics
 {
-    class ConstructionOfBuildingElements
+    class ConstructionOfBuildingElement
     {
-        public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement)
+        public static IIfcMaterialLayerSet materialLayerSet { get; set; }
+
+        public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement, Enums.TypeRoomConfig roomConfig, string globalIdSender, 
+            string globalIdReciever)
         {
             var sem = new SemanticHandler.SemanticHandler();
-            IIfcMaterialLayerSet materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
 
             var type = sem.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
             Console.WriteLine("The predefinied type of the building element is: {0}\n", type);
+            if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff) // hier auch ver1Room und ver2Room?
+            {
+                var globalIdConnectingSlab = sem.GetGlobalIdOfConnectingBuildingElementOfTwoSpaces(model, globalIdSender, globalIdReciever);
+                materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectingSlab);
+            }
+            else
+            {
+                materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
+            }
             
             Console.WriteLine("The material layer set of the building element consists of the following materials:");
             foreach (IIfcMaterialLayer materialLayer in materialLayerSet.MaterialLayers)

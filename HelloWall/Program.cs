@@ -52,7 +52,7 @@ namespace Holzbau
                 EditorsOrganisationName = "TH Rosenheim"
             };
 
-            /*using (var model = IfcStore.Open(fileName, editor))
+           /* using (var model = IfcStore.Open(fileName, editor))
             {
 
                 Console.WriteLine("First of all we create the zones in the building. How many zones do you want to create?");
@@ -98,27 +98,27 @@ namespace Holzbau
             }*/
             using (var model2 = IfcStore.Open(fileNameNew, editor))
             {
-                string globalIdSender = "0DAaFssanC68gpP1rH_5js";
-                string globalIdReciever = "0DAaFssanC68gpP1rH_5jQ";
+                string globalIdSender = "0DAaFssanC68gpP1rH_5jX";
+                string globalIdReciever = "0DAaFssanC68gpP1rH_5jG";
                 numberOfConnectedBuildingElements = 1;
 
                 //Raumkonfiguration feststellen
-                Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
-                globalIdReciever = Console.ReadLine();
+                //Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
+                //globalIdReciever = Console.ReadLine();
 
-                var roomConfig = RoomConfigurations.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
+                var roomConfig = RoomConfiguration.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
                 Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
                 Console.ReadKey();
-                globalIdConnectedBuildingElement1 = "0i8nVeTTf6ox2YVT2SRF16";
-                globalIdConnectedBuildingElement2 = "0i8nVeTTf6ox2YVT2SRF1u";
+                globalIdConnectedBuildingElement1 = "0i8nVeTTf6ox2YVT2SRF1C";
+                //globalIdConnectedBuildingElement2 = "0i8nVeTTf6ox2YVT2SRF1u";
                 if (numberOfConnectedBuildingElements >= 1)
                 {
-                    typeOfBuildingElement1 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1, globalIdSender, globalIdReciever, roomConfig);
+                    typeOfBuildingElement1 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1,globalIdReciever, roomConfig);
                     Console.WriteLine("The type of building element is: {0}\n", typeOfBuildingElement1);
                     Console.ReadKey();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
-                    constructionType1 = ConstructionOfBuildingElements.GetConstruction(model2, globalIdConnectedBuildingElement1);
+                    constructionType1 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement1, roomConfig, globalIdSender, globalIdReciever);
                     Console.WriteLine("The construction type is: {0}", constructionType1);
                     if (numberOfConnectedBuildingElements == 1)
                     {
@@ -131,12 +131,12 @@ namespace Holzbau
                 if (numberOfConnectedBuildingElements >= 2)
                 {
                     Console.WriteLine("\nNow we're going on with the second connected building element");
-                    typeOfBuildingElement2 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement2, globalIdSender, globalIdReciever, roomConfig);
+                    typeOfBuildingElement2 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement2, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement2);
                     Console.ReadKey();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
-                    constructionType2 = ConstructionOfBuildingElements.GetConstruction(model2, globalIdConnectedBuildingElement2);
+                    constructionType2 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement2, roomConfig, globalIdSender, globalIdReciever);
                     Console.WriteLine("The second construction type is: {0}", constructionType2);
 
                     if (numberOfConnectedBuildingElements == 2)
@@ -151,12 +151,12 @@ namespace Holzbau
                 }
                 if (numberOfConnectedBuildingElements >= 3)
                 {
-                    typeOfBuildingElement3 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement3, globalIdSender, globalIdReciever, roomConfig);
+                    typeOfBuildingElement3 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement3, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement3);
                     Console.ReadKey();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
-                    constructionType3 = ConstructionOfBuildingElements.GetConstruction(model2, globalIdConnectedBuildingElement3);
+                    constructionType3 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement3, roomConfig, globalIdSender, globalIdReciever);
                     Console.WriteLine("The second construction type is: {0}", constructionType3);
 
                     if (numberOfConnectedBuildingElements == 3)
