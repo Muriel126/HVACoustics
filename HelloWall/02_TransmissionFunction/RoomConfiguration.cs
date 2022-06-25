@@ -376,7 +376,7 @@ namespace HVACoustics
                 //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen und daher haben Räume unterschiedliche Länge
                 if (direcY == Enums.TypeDirec.Ypos)
                 {
-                    if ((Y1 + YDim1 + eqWallThick) > Y2)
+                    if ((Y1 + YDim1 + eqWallThick) > Y2 || Y1 - tolerance < Y2 && Y1 + tolerance > Y2 || Y2 - tolerance < Y1 && Y2 + tolerance > Y1)
                     {
                         //Raum 1. Ord.
                         return Enums.TypeRoomConfig.horNegOff;
@@ -514,7 +514,6 @@ namespace HVACoustics
                     }
                     else if (direcX == Enums.TypeDirec.Xneg)
                     {
-                        Console.WriteLine("test");
                         if ((X2 + XDim2 + eqWallThick) > X1)
                         {
                             //Raum 1. Ord.
@@ -555,7 +554,7 @@ namespace HVACoustics
                         }
                         else if (((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + YDim2 + eqWallThick < Y1)
+                            if (Y1 + YDim1 + eqWallThick < Y2)  // || Y2 + YDim2 + eqWallThick < Y1)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -566,7 +565,7 @@ namespace HVACoustics
                         }
                         else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X1 + XDim1 + eqWallThick < X2)  // || X2 + XDim2 + eqWallThick < X1)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -584,7 +583,7 @@ namespace HVACoustics
                         }
                         else if ((X1 + XDim1 + eqWallThick) > X2 && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + YDim2 + eqWallThick < Y1)
+                            if (Y2 + YDim2 + eqWallThick < Y1) // || Y1 + YDim1 + eqWallThick < Y2)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -595,7 +594,7 @@ namespace HVACoustics
                         }
                         else if ((Y2 + YDim2 + eqWallThick) > Y1 && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -613,7 +612,7 @@ namespace HVACoustics
                         }
                         else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + XDim2 + eqWallThick < Y1)
+                            if (Y2 + XDim2 + eqWallThick < Y1) // || Y1 + YDim1 + eqWallThick < Y2)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -624,7 +623,7 @@ namespace HVACoustics
                         }
                         else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -642,7 +641,7 @@ namespace HVACoustics
                         }
                         else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y2 + YDim2 + eqWallThick < Y1 || Y1 + XDim1 + eqWallThick < Y2)
+                            if (Y2 + YDim2 + eqWallThick < Y1) // || Y1 + XDim1 + eqWallThick < Y2)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -653,7 +652,7 @@ namespace HVACoustics
                         }
                         else if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X2 + XDim2 + eqWallThick < X1) // || X1 + XDim1 + eqWallThick < X2)
                             {
                                 return Enums.TypeRoomConfig.horPosOff;
                             }
@@ -699,7 +698,7 @@ namespace HVACoustics
                 {
                     if (direcY == Enums.TypeDirec.Ypos)
                     {
-                        if (Y1 + YDim1 -tolerance > Y2)
+                        if (Y1 + YDim1 - tolerance > Y2)
                         {
                             return Enums.TypeRoomConfig.verNegOff;
                         }
@@ -878,7 +877,7 @@ namespace HVACoustics
                         }
                         else if (((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + YDim2 + eqWallThick < Y1)
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
@@ -889,7 +888,7 @@ namespace HVACoustics
                         }
                         else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
@@ -911,7 +910,7 @@ namespace HVACoustics
                         }
                         else if ((X1 + XDim1 + eqWallThick) > X2 && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + YDim2 + eqWallThick < Y1)
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
@@ -922,7 +921,7 @@ namespace HVACoustics
                         }
                         else if ((Y2 + YDim2 + eqWallThick) > Y1 && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X2 + XDim2 + eqWallThick < X1) // || X1 + XDim1 + eqWallThick < X2)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
@@ -944,7 +943,7 @@ namespace HVACoustics
                         }
                         else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y1 + YDim1 + eqWallThick < Y2 || Y2 + XDim2 + eqWallThick < Y1)
+                            if (Y2 + XDim2 + eqWallThick < Y1) // || Y1 + YDim1 + eqWallThick < Y2)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
@@ -955,7 +954,7 @@ namespace HVACoustics
                         }
                         else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
                                 return Enums.TypeRoomConfig.verPosOff;
                             }
