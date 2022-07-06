@@ -47,13 +47,13 @@ namespace HVACoustics
                 if (numberOfConnectedBuildingElements > 1)
                 {
                     Console.WriteLine("Enter the second connected building element to this source:");
-                    string globalIdConnectedBuildingElement2 = Console.ReadLine();
+                    globalIdConnectedBuildingElement2 = Console.ReadLine();
                     IfcBuildingElement buildingElement2 = model.Instances.FirstOrDefault<IfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement2);
 
                     if (numberOfConnectedBuildingElements > 2)
                     {
                         Console.WriteLine("Enter the third connected building element to this source:");
-                        string globalIdConnectedBuildingElement3 = Console.ReadLine();
+                        globalIdConnectedBuildingElement3 = Console.ReadLine();
 
                         IfcBuildingElement buildingElement3 = model.Instances.FirstOrDefault<IfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement3);
 

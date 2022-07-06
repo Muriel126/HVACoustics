@@ -71,5 +71,10 @@ namespace HVACoustics
             start,
             end
         }
+        public enum SameZone
+        {
+            sameZone,
+            differentZone
+        }
     }
 }

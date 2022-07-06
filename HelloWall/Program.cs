@@ -19,7 +19,7 @@ using HVACoustics;
 using System.Linq;
 using System.Reflection.Emit;
 
-namespace Holzbau
+namespace HVACoustics
 {
     class Program
     {
@@ -40,8 +40,8 @@ namespace Holzbau
         static int Main()
         {
 
-            const string fileName = "2021_fhRo_RefBuild_v_02_mitTGA_ohne Fussbodenaufbau.ifc";
-            const string fileNameNew = "gehealtes Referenzmodell.ifc";
+            const string fileName = "2021_fhRo_RefBuild.ifc";
+            const string fileNameNew = "vorbereitetes Referenzmodell.ifc";
 
             var editor = new XbimEditorCredentials
             {
@@ -52,7 +52,7 @@ namespace Holzbau
                 EditorsOrganisationName = "TH Rosenheim"
             };
 
-           /* using (var model = IfcStore.Open(fileName, editor))
+            using (var model = IfcStore.Open(fileName, editor))
             {
 
                 Console.WriteLine("First of all we create the zones in the building. How many zones do you want to create?");
@@ -65,8 +65,7 @@ namespace Holzbau
                 }
 
                 Console.WriteLine("Now we need to create a relation between the source and the connected building elements.");
-                //hier auch mehrere Quellen abfragen?
-                //Raum mit Quelle auslesen ( oder optional abfragen ?)
+
                 Source.GetSpaceWithSource(model);
                 globalIdSource = Source.globalIdSource;
                 globalIdSender = Source.globalIdSender;
@@ -80,7 +79,7 @@ namespace Holzbau
                     Source.CreateRelSourceToBuildingElement(model, globalIdSource, 1);
                     globalIdConnectedBuildingElement1 = Source.globalIdConnectedBuildingElement1;
                 }
-                if (numberOfConnectedBuildingElements ==2)
+                if (numberOfConnectedBuildingElements == 2)
                 {
                     Source.CreateRelSourceToBuildingElement(model, globalIdSource, 2);
                     globalIdConnectedBuildingElement1 = Source.globalIdConnectedBuildingElement1;
@@ -95,22 +94,26 @@ namespace Holzbau
                 }
 
                 model.SaveAs(fileNameNew);
-            }*/
+            }
             using (var model2 = IfcStore.Open(fileNameNew, editor))
             {
-                string globalIdSender = "0DAaFssanC68gpP1rH_5jX";
-                string globalIdReciever = "0DAaFssanC68gpP1rH_5jG";
-                numberOfConnectedBuildingElements = 1;
+                //string globalIdSender = "0DAaFssanC68gpP1rH_5js";
+                //string globalIdReciever = "0DAaFssanC68gpP1rH_5jQ";
+                //numberOfConnectedBuildingElements = 2;
 
                 //Raumkonfiguration feststellen
-                //Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
-                //globalIdReciever = Console.ReadLine();
+                Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
+                globalIdReciever = Console.ReadLine();
+
+                var sameZone = Zone.CheckSameZone(model2, globalIdSender, globalIdReciever);
 
                 var roomConfig = RoomConfiguration.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
                 Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
                 Console.ReadKey();
-                globalIdConnectedBuildingElement1 = "0i8nVeTTf6ox2YVT2SRF1C";
+
+                //globalIdConnectedBuildingElement1 = "0i8nVeTTf6ox2YVT2SRF16";
                 //globalIdConnectedBuildingElement2 = "0i8nVeTTf6ox2YVT2SRF1u";
+
                 if (numberOfConnectedBuildingElements >= 1)
                 {
                     typeOfBuildingElement1 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1,globalIdReciever, roomConfig);
@@ -123,9 +126,10 @@ namespace Holzbau
                     if (numberOfConnectedBuildingElements == 1)
                     {
                         Console.WriteLine("\nThe resulting data is:\n" +
-                                        "Room Configuration: {0}\n" +
-                                        "First type of building element: {1}\n" +
-                                        "First construction type: {2}\n" , roomConfig, typeOfBuildingElement1, constructionType1);
+                                        "Same Zone?: {0}\n" + 
+                                        "Room Configuration: {1}\n" +
+                                        "First type of building element: {2}\n" +
+                                        "First construction type: {3}\n" , sameZone, roomConfig, typeOfBuildingElement1, constructionType1);
                     }
                 }
                 if (numberOfConnectedBuildingElements >= 2)
@@ -142,11 +146,12 @@ namespace Holzbau
                     if (numberOfConnectedBuildingElements == 2)
                     {
                         Console.WriteLine("\nThe resulting data is:\n" +
-                                        "Room Configuration: {0}/+\n" +
-                                        "First type of building element: {1}\n" +
-                                        "First construction type: {2}\n" +
-                                        "Second type of building element: {3}\n" +
-                                        "Second construction type: {4}\n", roomConfig, typeOfBuildingElement1, constructionType1, typeOfBuildingElement2, constructionType2);
+                                        "Same Zone?: {0}\n" +
+                                        "Room Configuration: {1}\n" +
+                                        "First type of building element: {2}\n" +
+                                        "First construction type: {3}\n" +
+                                        "Second type of building element: {4}\n" +
+                                        "Second construction type: {5}\n", sameZone, roomConfig, typeOfBuildingElement1, constructionType1, typeOfBuildingElement2, constructionType2);
                     }
                 }
                 if (numberOfConnectedBuildingElements >= 3)
@@ -162,13 +167,14 @@ namespace Holzbau
                     if (numberOfConnectedBuildingElements == 3)
                     {
                         Console.WriteLine("\nThe resulting data is:\n" +
-                                        "Room Configuration: {0}\n" +
-                                        "First type of building element: {1}\n" +
-                                        "First construction type: {2}\n" +
-                                        "Second type of building element: {3}\n" +
-                                        "Second construction type: {4}\n" +
-                                        "Third type of building element: {5}\n" +
-                                        "Third construction type: {6}", roomConfig, typeOfBuildingElement1, constructionType1, typeOfBuildingElement2, constructionType2, typeOfBuildingElement3, constructionType3);
+                                         "Same Zone?: {0}\n" +
+                                        "Room Configuration: {1}\n" +
+                                        "First type of building element: {2}\n" +
+                                        "First construction type: {3}\n" +
+                                        "Second type of building element: {4}\n" +
+                                        "Second construction type: {5}\n" +
+                                        "Third type of building element: {6}\n" +
+                                        "Third construction type: {7}", sameZone, roomConfig, typeOfBuildingElement1, constructionType1, typeOfBuildingElement2, constructionType2, typeOfBuildingElement3, constructionType3);
                     }
                 }
 

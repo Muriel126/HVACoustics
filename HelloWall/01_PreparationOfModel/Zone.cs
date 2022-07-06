@@ -102,7 +102,7 @@ namespace HVACoustics
                         });
                     }
                 }
-                else 
+                else
                 {
                     var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
                     {
@@ -117,5 +117,34 @@ namespace HVACoustics
                 return zone;
             }
         }
+        public static Enums.SameZone CheckSameZone(IfcStore model, string globalIdSender, string globalIdReciever)
+        {
+            Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
+            Enums.SameZone sameZone = new Enums.SameZone();
+
+            IfcSpace sender = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == globalIdSender);
+            IfcSpace reciever = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == globalIdReciever);
+
+            var relZones = model.Instances.OfType<IIfcRelAssignsToGroup>().Where(r => r.RelatingGroup is IIfcZone).ToList();
+            foreach (var zone in relZones)
+            {
+                foreach (var space in zone.RelatedObjects)
+                {
+                    dictZoneSpace.Add(space.GlobalId, zone.RelatingGroup.Name);
+                }
+            }
+
+            if (dictZoneSpace[globalIdSender] == dictZoneSpace[globalIdReciever])
+            {
+                sameZone = Enums.SameZone.sameZone;
+            }
+            else
+            {
+                sameZone = Enums.SameZone.differentZone;
+            }
+            
+            return sameZone;
+        }
     }
 }
+
