@@ -29,7 +29,7 @@ namespace HVACoustics
             {
                 materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectedBuildingElement);
             }
-            
+
             Console.WriteLine("The material layer set of the building element consists of the following materials:");
             foreach (IIfcMaterialLayer materialLayer in materialLayerSet.MaterialLayers)
             {

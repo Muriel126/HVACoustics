@@ -74,22 +74,27 @@ namespace HVACoustics
                             }
                             else if (layerSetTheElement != layerSetRecieverElement)
                             {
-                                Console.WriteLine("Are the two building elements of the same construction type?");
+                                Console.WriteLine("To identify basement walls, please answer:\n" +
+                                                   "Are the two building elements of the same construction type?");
+                                Console.ForegroundColor = ConsoleColor.Blue;
                                 Console.WriteLine("First building element:");
+                                Console.ResetColor();
                                 foreach (IIfcMaterialLayer materialLayer in layerSetTheElement.MaterialLayers)
                                 {
                                     Console.WriteLine("--------------------------------");
                                     Console.WriteLine("Layer: " + materialLayer.Name);
                                     Console.WriteLine("Material Name: " + materialLayer.Material.Name);
                                 }
+                                Console.ForegroundColor = ConsoleColor.Blue;
                                 Console.WriteLine("\nSecond building element:");
+                                Console.ResetColor();
                                 foreach (IIfcMaterialLayer materialLayer in layerSetRecieverElement.MaterialLayers)
                                 {
                                     Console.WriteLine("--------------------------------");
                                     Console.WriteLine("Layer: " + materialLayer.Name);
                                     Console.WriteLine("Material Name: " + materialLayer.Material.Name);
                                 }
-                                Console.WriteLine("\nIf they are of the same both timber construction enter Y if not enter N");  
+                                Console.WriteLine("\nIf they are both timber construction enter Y if not enter N:");  
                                 var input = Console.ReadLine();
                                 if (input == "Y" || input == "y")
                                 {

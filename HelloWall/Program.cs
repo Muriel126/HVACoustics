@@ -39,6 +39,7 @@ namespace HVACoustics
 
         static int Main()
         {
+            Console.Title = "HVACoustics";
 
             const string fileName = "2021_fhRo_RefBuild.ifc";
             const string fileNameNew = "vorbereitetes Referenzmodell.ifc";
@@ -54,6 +55,7 @@ namespace HVACoustics
 
             using (var model = IfcStore.Open(fileName, editor))
             {
+                Helper.WriteHeadLine("[Preparation of model]");
 
                 Console.WriteLine("First of all we create the zones in the building. How many zones do you want to create?");
                 int numberOfZones = int.Parse(Console.ReadLine());
@@ -92,14 +94,19 @@ namespace HVACoustics
                     globalIdConnectedBuildingElement2 = Source.globalIdConnectedBuildingElement2;
                     globalIdConnectedBuildingElement3 = Source.globalIdConnectedBuildingElement3;
                 }
+                Console.WriteLine("Preparations done...");
+                Console.ReadKey();
 
                 model.SaveAs(fileNameNew);
             }
+
             using (var model2 = IfcStore.Open(fileNameNew, editor))
             {
                 //string globalIdSender = "0DAaFssanC68gpP1rH_5js";
                 //string globalIdReciever = "0DAaFssanC68gpP1rH_5jQ";
                 //numberOfConnectedBuildingElements = 2;
+
+                Helper.WriteHeadLine("[Transmission Function]");
 
                 //Raumkonfiguration feststellen
                 Console.WriteLine("Now enter the GlobalId of the room, you want to predict.");
@@ -107,8 +114,12 @@ namespace HVACoustics
 
                 var sameZone = Zone.CheckSameZone(model2, globalIdSender, globalIdReciever);
 
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("\nRoom Configuration");
+                Console.ResetColor();
+
                 var roomConfig = RoomConfiguration.GetRoomConfiguration(model2, globalIdSender, globalIdReciever);
-                Console.WriteLine("The room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
+                Console.WriteLine("\nThe room configuration between the sender- and reciever-room is: {0} \n", roomConfig.ToString());
                 Console.ReadKey();
 
                 //globalIdConnectedBuildingElement1 = "0i8nVeTTf6ox2YVT2SRF16";
@@ -116,17 +127,26 @@ namespace HVACoustics
 
                 if (numberOfConnectedBuildingElements >= 1)
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Type of building element");
+                    Console.ResetColor();
+
                     typeOfBuildingElement1 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1,globalIdReciever, roomConfig);
                     Console.WriteLine("The type of building element is: {0}\n", typeOfBuildingElement1);
                     Console.ReadKey();
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Construction of building element");
+                    Console.ResetColor();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
                     constructionType1 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement1, roomConfig, globalIdSender, globalIdReciever);
                     Console.WriteLine("The construction type is: {0}", constructionType1);
                     if (numberOfConnectedBuildingElements == 1)
                     {
-                        Console.WriteLine("\nThe resulting data is:\n" +
-                                        "Same Zone?: {0}\n" + 
+                        Helper.WriteHeadLine("\n[RESULTING DATA]");
+
+                        Console.WriteLine("Same Zone?: {0}\n" + 
                                         "Room Configuration: {1}\n" +
                                         "First type of building element: {2}\n" +
                                         "First construction type: {3}\n" , sameZone, roomConfig, typeOfBuildingElement1, constructionType1);
@@ -134,10 +154,18 @@ namespace HVACoustics
                 }
                 if (numberOfConnectedBuildingElements >= 2)
                 {
-                    Console.WriteLine("\nNow we're going on with the second connected building element");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("\nType of second building element");
+                    Console.ResetColor();
+
+                    Console.WriteLine("Now we're going on with the second connected building element");
                     typeOfBuildingElement2 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement2, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement2);
                     Console.ReadKey();
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Construction of second building element");
+                    Console.ResetColor();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
                     constructionType2 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement2, roomConfig, globalIdSender, globalIdReciever);
@@ -145,8 +173,9 @@ namespace HVACoustics
 
                     if (numberOfConnectedBuildingElements == 2)
                     {
-                        Console.WriteLine("\nThe resulting data is:\n" +
-                                        "Same Zone?: {0}\n" +
+                        Helper.WriteHeadLine("\n[RESULTING DATA]");
+                        
+                        Console.WriteLine("Same Zone?: {0}\n" +
                                         "Room Configuration: {1}\n" +
                                         "First type of building element: {2}\n" +
                                         "First construction type: {3}\n" +
@@ -156,9 +185,17 @@ namespace HVACoustics
                 }
                 if (numberOfConnectedBuildingElements >= 3)
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("\nType of third building element");
+                    Console.ResetColor();
+
                     typeOfBuildingElement3 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement3, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement3);
                     Console.ReadKey();
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Construction of third building element");
+                    Console.ResetColor();
 
                     Console.WriteLine("In the next step we will get the construction of building element to which the source is connected.\n");
                     constructionType3 = ConstructionOfBuildingElement.GetConstruction(model2, globalIdConnectedBuildingElement3, roomConfig, globalIdSender, globalIdReciever);
@@ -166,8 +203,9 @@ namespace HVACoustics
 
                     if (numberOfConnectedBuildingElements == 3)
                     {
-                        Console.WriteLine("\nThe resulting data is:\n" +
-                                         "Same Zone?: {0}\n" +
+                        Helper.WriteHeadLine("\n[RESULTING DATA]");
+
+                        Console.WriteLine("Same Zone?: {0}\n" +
                                         "Room Configuration: {1}\n" +
                                         "First type of building element: {2}\n" +
                                         "First construction type: {3}\n" +

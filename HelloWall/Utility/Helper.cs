@@ -1,8 +1,10 @@
 ﻿using NestedDictionaryLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xbim.Ifc4.Interfaces;
 
@@ -24,6 +26,34 @@ namespace HVACoustics
             foreach (KeyValuePair<string, NestedDictionary<double, double>> kvp1 in dictionary)
                 foreach (KeyValuePair<double, double> kvp2 in kvp1.Value)
                     Console.WriteLine($"{kvp1.Key}\t-\t{kvp2.Key}\t-\t{kvp2.Value}");
+            Console.WriteLine();
+        }
+        public static void WriteHeadLine(string text)
+        {
+            Helper.WriteColor(text , ConsoleColor.DarkGray);
+           /* Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(text);
+            Console.BackgroundColor = ConsoleColor.Black;*/
+        }
+        static void WriteColor(string message, ConsoleColor color)
+        {
+            var pieces = Regex.Split(message, @"(\[[^\]]*\])");
+
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                string piece = pieces[i];
+
+                if (piece.StartsWith("[") && piece.EndsWith("]"))
+                {
+                    Console.BackgroundColor = color;
+                    piece = piece.Substring(1, piece.Length - 2);
+                }
+
+                Console.Write(piece);
+                Console.ResetColor();
+            }
+
             Console.WriteLine();
         }
 
