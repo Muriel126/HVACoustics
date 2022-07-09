@@ -8,7 +8,7 @@ using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.ProductExtension;
 using Xbim.Ifc4.SharedBldgElements;
 
-namespace HVACoustics.SemanticHandler
+namespace HVACoustics
 {
     class SemanticHandler
     {
@@ -29,7 +29,7 @@ namespace HVACoustics.SemanticHandler
 
             return elementClass;
         }
-        public IfcWallTypeEnum GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
+        public static IfcWallTypeEnum GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement)
         {
             var sem = new SemanticHandler();
 

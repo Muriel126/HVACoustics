@@ -131,6 +131,10 @@ namespace HVACoustics
                     Console.WriteLine("Type of building element");
                     Console.ResetColor();
 
+                    var type = SemanticHandler.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1);
+                    Console.WriteLine("\nThe predefinied type of the building element is: {0}\n", type);
+                    Console.ReadKey();
+
                     typeOfBuildingElement1 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1,globalIdReciever, roomConfig);
                     Console.WriteLine("The type of building element is: {0}\n", typeOfBuildingElement1);
                     Console.ReadKey();
@@ -158,7 +162,10 @@ namespace HVACoustics
                     Console.WriteLine("\nType of second building element");
                     Console.ResetColor();
 
-                    Console.WriteLine("Now we're going on with the second connected building element");
+                    var type = SemanticHandler.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1);
+                    Console.WriteLine("\nThe predefinied type of the building element is: {0}\n", type);
+                    Console.ReadKey();
+                    
                     typeOfBuildingElement2 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement2, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement2);
                     Console.ReadKey();
@@ -189,6 +196,10 @@ namespace HVACoustics
                     Console.WriteLine("\nType of third building element");
                     Console.ResetColor();
 
+                    var type = SemanticHandler.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement1);
+                    Console.WriteLine("\nThe predefinied type of the building element is: {0}\n", type);
+                    Console.ReadKey();
+
                     typeOfBuildingElement3 = TypeOfBuildingElement.GetTypeOfBuildingElement(model2, globalIdConnectedBuildingElement3, globalIdReciever, roomConfig);
                     Console.WriteLine("The second type of building element is: {0}\n", typeOfBuildingElement3);
                     Console.ReadKey();
@@ -215,7 +226,6 @@ namespace HVACoustics
                                         "Third construction type: {7}", sameZone, roomConfig, typeOfBuildingElement1, constructionType1, typeOfBuildingElement2, constructionType2, typeOfBuildingElement3, constructionType3);
                     }
                 }
-
                 return 0;
             }
         }

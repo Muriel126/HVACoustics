@@ -16,10 +16,9 @@ namespace HVACoustics
         public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement, Enums.TypeRoomConfig roomConfig, string globalIdSender, 
             string globalIdReciever)
         {
-            var sem = new SemanticHandler.SemanticHandler();
+            var sem = new SemanticHandler();
 
-            var type = sem.GetTypeOfBuildingElement(model, globalIdConnectedBuildingElement);
-            Console.WriteLine("The predefinied type of the building element is: {0}\n", type);
+            
             if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff) // hier auch ver1Room und ver2Room?
             {
                 var globalIdConnectingSlab = sem.GetGlobalIdOfConnectingBuildingElementOfTwoSpaces(model, globalIdSender, globalIdReciever);

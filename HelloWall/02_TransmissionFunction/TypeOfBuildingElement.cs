@@ -22,7 +22,7 @@ namespace HVACoustics
         public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
         {
             var geo = new GeometryHandler();
-            var sem = new SemanticHandler.SemanticHandler();
+            var sem = new SemanticHandler();
 
             IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
             IIfcMaterialLayerSet layerSetTheElement;
