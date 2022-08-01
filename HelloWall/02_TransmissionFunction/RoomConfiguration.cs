@@ -46,10 +46,6 @@ namespace HVACoustics
         public static double X2EndRounded { get; set; }
         public static double Y2EndRounded { get; set; }
 
-        public static double direcX1 { get; set; }
-        public static double direcY1 { get; set; }
-        public static double direcX2 { get; set; }
-        public static double direcY2 { get; set; }
         public static string globalIdStorey1 { get; set; }
         public static string globalIdStorey2 { get; set; }
         public static int indexStorey1 { get; set; }

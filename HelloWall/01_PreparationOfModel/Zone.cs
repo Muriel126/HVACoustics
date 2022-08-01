@@ -12,6 +12,8 @@ namespace HVACoustics
 {
     class Zone
     {
+        public static IfcRelAssignsToGroup relGroup { get; set; }
+
         public static IfcZone CreateZone(IfcStore model)
         {
             using (var txn = model.BeginTransaction("Create Zone"))
@@ -25,102 +27,36 @@ namespace HVACoustics
                 string GlobalIdRoom1 = Console.ReadLine();
                 IfcSpace room1 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom1);
 
-                Console.WriteLine("Add second GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
-                string GlobalIdRoom2 = Console.ReadLine();
-                IfcSpace room2 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom2);
-                if (GlobalIdRoom2 != "n")
+                relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
                 {
-                    Console.WriteLine("Add third GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
-                    string GlobalIdRoom3 = Console.ReadLine();
-                    IfcSpace room3 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom3);
-                    if (GlobalIdRoom3 != "n")
-                    {
-                        Console.WriteLine("Add forth GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
-                        string GlobalIdRoom4 = Console.ReadLine();
-                        IfcSpace room4 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom4);
+                    r.GlobalId = Guid.NewGuid();
+                    r.RelatedObjects.Add(room1);
+                    r.RelatingGroup = zone;
+                });
 
-                        if (GlobalIdRoom4 != "n")
-                        {
-                            Console.WriteLine("Add fifth GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
-                            string GlobalIdRoom5 = Console.ReadLine();
-                            IfcSpace room5 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom5);
-
-                            if (GlobalIdRoom5 != "n")
-                            {
-                                Console.WriteLine("Add sixth GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
-                                string GlobalIdRoom6 = Console.ReadLine();
-                                IfcSpace room6 = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom6);
-
-                                var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
-                                {
-                                    r.GlobalId = Guid.NewGuid();
-                                    r.RelatedObjects.Add(room1);
-                                    r.RelatedObjects.Add(room2);
-                                    r.RelatedObjects.Add(room3);
-                                    r.RelatedObjects.Add(room4);
-                                    r.RelatedObjects.Add(room5);
-                                    r.RelatedObjects.Add(room6);
-                                    r.RelatingGroup = zone;
-                                });
-                            }
-                            else
-                            {
-                                var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
-                                {
-                                    r.GlobalId = Guid.NewGuid();
-                                    r.RelatedObjects.Add(room1);
-                                    r.RelatedObjects.Add(room2);
-                                    r.RelatedObjects.Add(room3);
-                                    r.RelatedObjects.Add(room4);
-                                    r.RelatedObjects.Add(room5);
-                                    r.RelatingGroup = zone;
-                                });
-                            }
-                        }
-                        else
-                        {
-                            var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
-                            {
-                                r.GlobalId = Guid.NewGuid();
-                                r.RelatedObjects.Add(room1);
-                                r.RelatedObjects.Add(room2);
-                                r.RelatedObjects.Add(room3);
-                                r.RelatedObjects.Add(room4);
-                                r.RelatingGroup = zone;
-                            });
-                        }
-                    }
-                    else
-                    {
-                        var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
-                        {
-                            r.GlobalId = Guid.NewGuid();
-                            r.RelatedObjects.Add(room1);
-                            r.RelatedObjects.Add(room2);
-                            r.RelatedObjects.Add(room3);
-                            r.RelatingGroup = zone;
-                        });
-                    }
-                }
-                else
+                for (int i = 0; i < 10; i++)
                 {
-                    var relGroup = model.Instances.New<IfcRelAssignsToGroup>(r =>
+                    Console.WriteLine("Add next GlobalId of room to " + nameZone + " if there is no further room type \"n\"");
+                    string GlobalIdRoom = Console.ReadLine();
+                    if (GlobalIdRoom == "n")
                     {
-                        r.GlobalId = Guid.NewGuid();
-                        r.RelatedObjects.Add(room1);
-                        r.RelatedObjects.Add(room2);
-                        r.RelatingGroup = zone;
-                    });
+                        break;
+                    }
+                    else 
+                    {
+                        IfcSpace room = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == GlobalIdRoom);
+                        relGroup.RelatedObjects.Add(room);
+                    }
                 }
 
                 txn.Commit();
                 return zone;
             }
         }
-        public static Enums.SameZone CheckSameZone(IfcStore model, string globalIdSender, string globalIdReciever)
+        public static bool CheckSameZone(IfcStore model, string globalIdSender, string globalIdReciever)
         {
             Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
-            Enums.SameZone sameZone = new Enums.SameZone();
+            bool sameZone = new bool();
 
             IfcSpace sender = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == globalIdSender);
             IfcSpace reciever = model.Instances.FirstOrDefault<IfcSpace>(d => d.GlobalId == globalIdReciever);
@@ -136,11 +72,11 @@ namespace HVACoustics
 
             if (dictZoneSpace[globalIdSender] == dictZoneSpace[globalIdReciever])
             {
-                sameZone = Enums.SameZone.sameZone;
+                sameZone = true;
             }
             else
             {
-                sameZone = Enums.SameZone.differentZone;
+                sameZone = false;
             }
             
             return sameZone;

@@ -19,11 +19,9 @@ namespace HVACoustics
         public static bool Basement { get; set; }
         
 
-        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, Enums.TypeRoomConfig roomConfig)
+        public static Enums.TypeBuildingElement GetTypeOfBuildingElement(IfcStore model, string globalIdConnectedBuildingElement, string globalIdReciever, 
+            Enums.TypeRoomConfig roomConfig)
         {
-            var geo = new GeometryHandler();
-            var sem = new SemanticHandler();
-
             IIfcBuildingElement theElement = model.Instances.FirstOrDefault<IIfcBuildingElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
             IIfcMaterialLayerSet layerSetTheElement;
             IIfcMaterialLayerSet layerSetRecieverElement;
@@ -32,6 +30,9 @@ namespace HVACoustics
             List<string> listBoundedElementsReciever = new List<string>();
             Dictionary<string, Enums.TypeDirec> dictSpaceDirec = new Dictionary<string, Enums.TypeDirec>();
             Dictionary<string, string> dictZoneSpace = new Dictionary<string, string>();
+
+            var geo = new GeometryHandler();
+            var sem = new SemanticHandler();
 
             double xE = new double();
             double yE = new double();
