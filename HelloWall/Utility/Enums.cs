@@ -21,7 +21,8 @@ namespace HVACoustics
             ver1Room,
             ver2Room,
             hor1Room,
-            hor2Room
+            hor2Room,
+            invalid //für Raumkonfigurationen, die noch nicht im Katalog vorgesehen sind
         }
         public enum TypeDirec
         {

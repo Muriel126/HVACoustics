@@ -93,49 +93,6 @@ namespace HVACoustics
             X2EndRounded = X2rounded + Math.Round(XDim2, 0);
             Y2EndRounded = Y2rounded + Math.Round(YDim2, 0);
 
-
-            /*if (((IIfcExtrudedAreaSolid)body1).Position.RefDirection != null)
-            {
-                direcX1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.X;
-                direcY1 = ((IIfcExtrudedAreaSolid)body1).Position.RefDirection.Y;
-            }
-            else
-            {
-                direcX1 = 1;
-                direcY1 = 0;
-            }
-            if (direcX1 == 1 || direcX1 == -1)
-            {
-                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
-                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
-            }
-            if (direcY1 == 1 || direcY1 == -1)
-            {
-                XDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).YDim, 2);
-                YDim1 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body1).SweptArea).XDim, 2);
-            }*/
-
-            /*if (((IIfcExtrudedAreaSolid)body2).Position.RefDirection != null)
-            {
-                direcX2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.X;
-                direcY2 = ((IIfcExtrudedAreaSolid)body2).Position.RefDirection.Y;
-            }
-            else
-            {
-                direcX2 = 1;
-                direcY2 = 0;
-            }
-            if (direcX2 == 1 || direcX2 == -1)
-            {
-                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
-                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
-            }
-            if (direcY2 == 1 || direcY2 == -1)
-            {
-                XDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).YDim, 2);
-                YDim2 = Math.Round(((IIfcRectangleProfileDef)((IIfcExtrudedAreaSolid)body2).SweptArea).XDim, 2);
-            }*/
-
             /*Console.WriteLine(direcX1);
             Console.WriteLine(direcY1);
             Console.WriteLine(direcX2);
@@ -292,8 +249,7 @@ namespace HVACoustics
             return roomConfig;
         }
 
-        public Enums.TypeRoomConfig TryHorizontalConfigs(double X1, double Y1, double XDim1, double YDim1, double X2, double Y2, double XDim2, double YDim2, 
-            NestedDictionary<string, double, double> dictCoors, NestedDictionary<string, double, double> dictCoorsWithXDim, NestedDictionary<string, double, double> dictCoorsWithYDim)
+        public Enums.TypeRoomConfig TryHorizontalConfigs(double X1, double Y1, double XDim1, double YDim1, double X2, double Y2, double XDim2, double YDim2, NestedDictionary<string, double, double> dictCoors, NestedDictionary<string, double, double> dictCoorsWithXDim, NestedDictionary<string, double, double> dictCoorsWithYDim)
         {
             var geo = new GeometryHandler();
             Enums.TypeRoomConfig roomConfig = new Enums.TypeRoomConfig();
@@ -1004,8 +960,6 @@ namespace HVACoustics
 
             var direcX = geo.GetDirection(X1, X2, 0, 0);
             var direcY = geo.GetDirection(0, 0, Y1, Y2);
-            //Console.WriteLine(direcX);
-            //Console.WriteLine(direcY);
 
             if (X1 - tolerance < X2 && X1 + tolerance > X2 || X2 - tolerance < X1 && X2 + tolerance > X1) //==
             {
@@ -1017,367 +971,321 @@ namespace HVACoustics
                         {
                             return Enums.TypeRoomConfig.ver1Room;
                         }
-                        /* else
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                     }
-                     else
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }*/
+                        else
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                    }
+                    else
+                    {
+                        return Enums.TypeRoomConfig.ver1Room;
                     }
                 }
-                /*  else if (Y1 != Y2)
-                  {
-                      if (direcY == Enums.TypeDirec.Ypos)
-                      {
-                          if (Y1 + YDim1 > Y2)
-                          {
-                              roomConfig = Enums.TypeRoomConfig.verNegOff;
-                              Console.WriteLine(roomConfig);
-                          }
-                          else
-                          {
-                              if ((Y1 + YDim1 + 0.4) > Y2)
-                              {
-                                  roomConfig = Enums.TypeRoomConfig.verOff;
-                                  Console.WriteLine(roomConfig);
-                              }
-                              else
-                              {
-                                  string ord = "Raum höherer Ord.";
-                              }
-                          }
-                      }
-                      else if (direcY == Enums.TypeDirec.Yneg)
-                      {
-                          if (Y2 + YDim2 > Y1)
-                          {
-                              roomConfig = Enums.TypeRoomConfig.verNegOff;
-                              Console.WriteLine(roomConfig);
-                          }
-                          else
-                          {
-                              if ((Y2 + YDim2 + 0.4) > Y1)
-                              {
-                                  roomConfig = Enums.TypeRoomConfig.verOff;
-                                  Console.WriteLine(roomConfig);
-                              }
-                              else
-                              {
-                                  string ord = "Raum höherer Ord.";
-                              }
-                          }
-                      }
-                  }*/
+                else if (Y1 != Y2)
+                {
+                    if (direcY == Enums.TypeDirec.Ypos)
+                    {
+                        if (Y1 + YDim1 - tolerance > Y2)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else
+                        {
+                            if ((Y1 + YDim1 + eqWallThick) > Y2)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                    else if (direcY == Enums.TypeDirec.Yneg)
+                    {
+                        if (Y2 + YDim2 - tolerance > Y1)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else
+                        {
+                            if ((Y2 + YDim2 + eqWallThick) > Y1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                }
             }
-            /* else if (X1 + XDim1 - 0.2 < X2 + XDim2 && X1 + XDim1 + 0.2 > X2 + XDim2 || X2 + XDim2 - 0.2 < X1 + XDim1 && X2 + XDim2 + 0.2 > X1 + XDim1) //==
-             {
-                 //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                 if (Y1 - 0.2 < Y2 && Y1 + 0.2 > Y2 || Y2 - 0.2 < Y1 && Y2 + 0.2 > Y1) //==
-                 {
-                     roomConfig = Enums.TypeRoomConfig.verNegOff;
-                     Console.WriteLine(roomConfig);
-                 }
-                 else if (direcY == Enums.TypeDirec.Ypos)
-                 {
-                     if (Y1 + YDim1 > Y2)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((Y1 + YDim1 + 0.4) > Y2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-                 else if (direcY == Enums.TypeDirec.Yneg)
-                 {
-                     if (Y2 + YDim2 > Y1)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((Y2 + YDim2 + 0.4) > Y1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-
-             }*/
-            /* else if (Y1 + YDim1 - 0.2 < Y2 + YDim2 && Y1 + YDim1 + 0.2 > X2 + YDim2 || Y2 + YDim2 - 0.2 < Y1 + YDim1 && Y2 + YDim2 + 0.2 > Y1 + YDim1) //==
-             {
-                 //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                 if (X1 - 0.2 < X2 && X1 + 0.2 > X2 || X2 - 0.2 < X1 && X2 + 0.2 > X1) //==
-                 {
-                     roomConfig = Enums.TypeRoomConfig.verNegOff;
-                     Console.WriteLine(roomConfig);
-                 }
-                 else if (direcX == Enums.TypeDirec.Xpos)
-                 {
-                     if (X1 + XDim1 > X2)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((X1 + XDim1 + 0.4) > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-                 else if (direcX == Enums.TypeDirec.Xneg)
-                 {
-                     if (X2 + XDim2 > X1)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((X2 + XDim2 + 0.4) > X1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-             }
-             else if (X1 != X2)
-             {
-                 if (Y1 - 0.2 < Y2 && Y1 + 0.2 > Y2 || Y2 - 0.2 < Y1 && Y2 + 0.2 > Y1) //==
-                 {
-                     if (direcX == Enums.TypeDirec.Xpos)
-                     {
-                         if (X1 + XDim1 > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             if ((X1 + XDim1 + 0.4) > X2)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 string ord = "Raum höherer Ord.";
-                             }
-                         }
-                     }
-                     if (direcX == Enums.TypeDirec.Xneg)
-                     {
-                         if (X2 + XDim2 > X1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             if ((X2 + XDim2 + 0.4) > X1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 string ord = "Raum höherer Ord.";
-                             }
-                         }
-                     }
-                 }
-                 else if (Y1 != Y2)
-                 {
-                     if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Ypos)
-                     {
-                         if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2) && ((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else if ((Y1 + YDim1) > Y2 && (X1 + XDim1) > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else if (((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
-                         {
-                             if (Y1 + YDim1 + 0.4 < Y2 || Y2 + YDim2 + 0.4 < Y1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                         }
-                         else if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2))
-                         {
-                             if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                         }
-                     }
+            else if (X1 + XDim1 - tolerance < X2 + XDim2 && X1 + XDim1 + tolerance > X2 + XDim2 || X2 + XDim2 - tolerance < X1 + XDim1 && X2 + XDim2 + tolerance > X1 + XDim1) //==
+            {
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
+                if (Y1 - tolerance < Y2 && Y1 + tolerance > Y2 || Y2 - tolerance < Y1 && Y2 + tolerance > Y1) //==
+                {
+                    return Enums.TypeRoomConfig.ver1Room;
+                }
+                else if (direcY == Enums.TypeDirec.Ypos)
+                {
+                    if (Y1 + YDim1 - tolerance > Y2)
+                    {
+                        return Enums.TypeRoomConfig.ver1Room;
+                    }
+                    else
+                    {
+                        if ((Y1 + YDim1 + eqWallThick) > Y2)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+                else if (direcY == Enums.TypeDirec.Yneg)
+                {
+                    if (Y2 + YDim2 - tolerance > Y1)
+                    {
+                        return Enums.TypeRoomConfig.ver1Room;
+                    }
+                    else
+                    {
+                        if ((Y2 + YDim2 + eqWallThick) > Y1)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+            }
+            else if (Y1 + YDim1 - tolerance < Y2 + YDim2 && Y1 + YDim1 + tolerance > X2 + YDim2 || Y2 + YDim2 - tolerance < Y1 + YDim1 && Y2 + YDim2 + tolerance > Y1 + YDim1) //==
+            {
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
+                if (X1 - tolerance < X2 && X1 + tolerance > X2 || X2 - tolerance < X1 && X2 + tolerance > X1) //==
+                {
+                    return Enums.TypeRoomConfig.ver1Room;
+                }
+                else if (direcX == Enums.TypeDirec.Xpos)
+                {
+                    if (X1 + XDim1 - tolerance > X2)
+                    {
+                        return Enums.TypeRoomConfig.ver1Room;
+                    }
+                    else
+                    {
+                        if ((X1 + XDim1 + eqWallThick) > X2)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+                else if (direcX == Enums.TypeDirec.Xneg)
+                {
+                    if (X2 + XDim2 - tolerance > X1)
+                    {
+                        return Enums.TypeRoomConfig.ver1Room;
+                    }
+                    else
+                    {
+                        if ((X2 + XDim2 + eqWallThick) > X1)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+            }
+            else if (X1 != X2)
+            {
+                if (Y1 - tolerance < Y2 && Y1 + tolerance > Y2 || Y2 - tolerance < Y1 && Y2 + tolerance > Y1) //==
+                {
+                    if (direcX == Enums.TypeDirec.Xpos)
+                    {
+                        if (X1 + XDim1 - tolerance > X2)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else
+                        {
+                            if ((X1 + XDim1 + eqWallThick) > X2)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                    if (direcX == Enums.TypeDirec.Xneg)
+                    {
+                        if (X2 + XDim2 - tolerance > X1)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else
+                        {
+                            if ((X2 + XDim2 + eqWallThick) > X1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                }
+                else if (Y1 != Y2)
+                {
+                    if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Ypos)
+                    {
+                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else if ((Y1 + YDim1) > Y2 && (X1 + XDim1) > X2)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else if (((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
+                        {
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.ver1Room;
+                            }
+                        }
+                        else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
+                        {
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.ver1Room;
+                            }
+                        }
+                    }
                     else if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Yneg)
                     {
-                        if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1) && ((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
+                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y2 + YDim2) > Y1 && (X1 + XDim1) > X2)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver1Room;
                         }
-                        else if ((X1 + XDim1 + 0.4) > X2 && ((X1 + XDim1) < X2))
+                        else if ((X1 + XDim1 + eqWallThick) > X2 && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + 0.4 < Y2 || Y2 + YDim2 + 0.4 < Y1)
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
-                        else if ((Y2 + YDim2 + 0.4) > Y1 && ((Y2 + YDim2) < Y1))
+                        else if ((Y2 + YDim2 + eqWallThick) > Y1 && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X2 + XDim2 + eqWallThick < X1) // || X1 + XDim1 + eqWallThick < X2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Ypos)
                     {
-                        if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + 0.4) > X2) && ((X2 + XDim2) < X2))
+                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y1 + YDim1) > Y2 && (X2 + XDim2) > X1)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver1Room;
                         }
-                        else if (((X2 + XDim2 + 0.4) > X1) && (X2 + XDim2) < X1)
+                        else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y1 + YDim1 + 0.4 < Y2 || Y2 + XDim2 + 0.4 < Y1)
+                            if (Y2 + XDim2 + eqWallThick < Y1) // || Y1 + YDim1 + eqWallThick < Y2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
-                        else if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2))
+                        else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Yneg)
                     {
-                        if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + 0.4) > X2) && ((X2 + XDim2) < X2))
+                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y2 + YDim2) > Y1 && (X2 + XDim2) > X1)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver1Room;
                         }
-                        else if (((X2 + XDim2 + 0.4) > X1) && (X2 + XDim2) < X1)
+                        else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y2 + YDim2 + 0.4 < Y1 || Y1 + XDim1 + 0.4 < Y2)
+                            if (Y2 + YDim2 + eqWallThick < Y1 || Y1 + XDim1 + eqWallThick < Y2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
-                        else if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1))
+                        else if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver1Room;
                             }
                         }
                     }
                 }
-            }*/
+            }
             return roomConfig;
         }
         public Enums.TypeRoomConfig TryVerticalConfigsThirdimension(double X1, double Y1, double XDim1, double YDim1, double X2, double Y2, double XDim2, double YDim2)
@@ -1387,8 +1295,6 @@ namespace HVACoustics
 
             var direcX = geo.GetDirection(X1, X2, 0, 0);
             var direcY = geo.GetDirection(0, 0, Y1, Y2);
-            //Console.WriteLine(direcX);
-            //Console.WriteLine(direcY);
 
             if (X1 - tolerance < X2 && X1 + tolerance > X2 || X2 - tolerance < X1 && X2 + tolerance > X1) //==
             {
@@ -1400,367 +1306,321 @@ namespace HVACoustics
                         {
                             return Enums.TypeRoomConfig.ver2Room;
                         }
-                        /* else
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                     }
-                     else
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }*/
+                        else
+                        {
+                            return Enums.TypeRoomConfig.ver2Room;
+                        }
+                    }
+                    else
+                    {
+                        return Enums.TypeRoomConfig.ver2Room;
                     }
                 }
-                /*  else if (Y1 != Y2)
-                  {
-                      if (direcY == Enums.TypeDirec.Ypos)
-                      {
-                          if (Y1 + YDim1 > Y2)
-                          {
-                              roomConfig = Enums.TypeRoomConfig.verNegOff;
-                              Console.WriteLine(roomConfig);
-                          }
-                          else
-                          {
-                              if ((Y1 + YDim1 + 0.4) > Y2)
-                              {
-                                  roomConfig = Enums.TypeRoomConfig.verOff;
-                                  Console.WriteLine(roomConfig);
-                              }
-                              else
-                              {
-                                  string ord = "Raum höherer Ord.";
-                              }
-                          }
-                      }
-                      else if (direcY == Enums.TypeDirec.Yneg)
-                      {
-                          if (Y2 + YDim2 > Y1)
-                          {
-                              roomConfig = Enums.TypeRoomConfig.verNegOff;
-                              Console.WriteLine(roomConfig);
-                          }
-                          else
-                          {
-                              if ((Y2 + YDim2 + 0.4) > Y1)
-                              {
-                                  roomConfig = Enums.TypeRoomConfig.verOff;
-                                  Console.WriteLine(roomConfig);
-                              }
-                              else
-                              {
-                                  string ord = "Raum höherer Ord.";
-                              }
-                          }
-                      }
-                  }*/
+                else if (Y1 != Y2)
+                {
+                    if (direcY == Enums.TypeDirec.Ypos)
+                    {
+                        if (Y1 + YDim1 - tolerance > Y2)
+                        {
+                            return Enums.TypeRoomConfig.ver2Room;
+                        }
+                        else
+                        {
+                            if ((Y1 + YDim1 + eqWallThick) > Y2)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                    else if (direcY == Enums.TypeDirec.Yneg)
+                    {
+                        if (Y2 + YDim2 - tolerance > Y1)
+                        {
+                            return Enums.TypeRoomConfig.ver2Room;
+                        }
+                        else
+                        {
+                            if ((Y2 + YDim2 + eqWallThick) > Y1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                }
             }
-            /* else if (X1 + XDim1 - 0.2 < X2 + XDim2 && X1 + XDim1 + 0.2 > X2 + XDim2 || X2 + XDim2 - 0.2 < X1 + XDim1 && X2 + XDim2 + 0.2 > X1 + XDim1) //==
-             {
-                 //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                 if (Y1 - 0.2 < Y2 && Y1 + 0.2 > Y2 || Y2 - 0.2 < Y1 && Y2 + 0.2 > Y1) //==
-                 {
-                     roomConfig = Enums.TypeRoomConfig.verNegOff;
-                     Console.WriteLine(roomConfig);
-                 }
-                 else if (direcY == Enums.TypeDirec.Ypos)
-                 {
-                     if (Y1 + YDim1 > Y2)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((Y1 + YDim1 + 0.4) > Y2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-                 else if (direcY == Enums.TypeDirec.Yneg)
-                 {
-                     if (Y2 + YDim2 > Y1)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((Y2 + YDim2 + 0.4) > Y1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-
-             }*/
-            /* else if (Y1 + YDim1 - 0.2 < Y2 + YDim2 && Y1 + YDim1 + 0.2 > X2 + YDim2 || Y2 + YDim2 - 0.2 < Y1 + YDim1 && Y2 + YDim2 + 0.2 > Y1 + YDim1) //==
-             {
-                 //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
-                 if (X1 - 0.2 < X2 && X1 + 0.2 > X2 || X2 - 0.2 < X1 && X2 + 0.2 > X1) //==
-                 {
-                     roomConfig = Enums.TypeRoomConfig.verNegOff;
-                     Console.WriteLine(roomConfig);
-                 }
-                 else if (direcX == Enums.TypeDirec.Xpos)
-                 {
-                     if (X1 + XDim1 > X2)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((X1 + XDim1 + 0.4) > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-                 else if (direcX == Enums.TypeDirec.Xneg)
-                 {
-                     if (X2 + XDim2 > X1)
-                     {
-                         roomConfig = Enums.TypeRoomConfig.verNegOff;
-                         Console.WriteLine(roomConfig);
-                     }
-                     else
-                     {
-                         if ((X2 + XDim2 + 0.4) > X1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             string ord = "Raum höherer Ord.";
-                         }
-                     }
-                 }
-             }
-             else if (X1 != X2)
-             {
-                 if (Y1 - 0.2 < Y2 && Y1 + 0.2 > Y2 || Y2 - 0.2 < Y1 && Y2 + 0.2 > Y1) //==
-                 {
-                     if (direcX == Enums.TypeDirec.Xpos)
-                     {
-                         if (X1 + XDim1 > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             if ((X1 + XDim1 + 0.4) > X2)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 string ord = "Raum höherer Ord.";
-                             }
-                         }
-                     }
-                     if (direcX == Enums.TypeDirec.Xneg)
-                     {
-                         if (X2 + XDim2 > X1)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else
-                         {
-                             if ((X2 + XDim2 + 0.4) > X1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 string ord = "Raum höherer Ord.";
-                             }
-                         }
-                     }
-                 }
-                 else if (Y1 != Y2)
-                 {
-                     if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Ypos)
-                     {
-                         if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2) && ((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else if ((Y1 + YDim1) > Y2 && (X1 + XDim1) > X2)
-                         {
-                             roomConfig = Enums.TypeRoomConfig.verNegOff;
-                             Console.WriteLine(roomConfig);
-                         }
-                         else if (((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
-                         {
-                             if (Y1 + YDim1 + 0.4 < Y2 || Y2 + YDim2 + 0.4 < Y1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                         }
-                         else if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2))
-                         {
-                             if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                             else
-                             {
-                                 roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                 Console.WriteLine(roomConfig);
-                             }
-                         }
-                     }
+            else if (X1 + XDim1 - tolerance < X2 + XDim2 && X1 + XDim1 + tolerance > X2 + XDim2 || X2 + XDim2 - tolerance < X1 + XDim1 && X2 + XDim2 + tolerance > X1 + XDim1) //==
+            {
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
+                if (Y1 - tolerance < Y2 && Y1 + tolerance > Y2 || Y2 - tolerance < Y1 && Y2 + tolerance > Y1) //==
+                {
+                    return Enums.TypeRoomConfig.ver2Room;
+                }
+                else if (direcY == Enums.TypeDirec.Ypos)
+                {
+                    if (Y1 + YDim1 - tolerance > Y2)
+                    {
+                        return Enums.TypeRoomConfig.ver2Room;
+                    }
+                    else
+                    {
+                        if ((Y1 + YDim1 + eqWallThick) > Y2)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+                else if (direcY == Enums.TypeDirec.Yneg)
+                {
+                    if (Y2 + YDim2 - tolerance > Y1)
+                    {
+                        return Enums.TypeRoomConfig.ver2Room;
+                    }
+                    else
+                    {
+                        if ((Y2 + YDim2 + eqWallThick) > Y1)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+            }
+            else if (Y1 + YDim1 - tolerance < Y2 + YDim2 && Y1 + YDim1 + tolerance > X2 + YDim2 || Y2 + YDim2 - tolerance < Y1 + YDim1 && Y2 + YDim2 + tolerance > Y1 + YDim1) //==
+            {
+                //bedeutet dass X1 != X2 sonst wäre es in erste Abfrage gegangen
+                if (X1 - tolerance < X2 && X1 + tolerance > X2 || X2 - tolerance < X1 && X2 + tolerance > X1) //==
+                {
+                    return Enums.TypeRoomConfig.ver2Room;
+                }
+                else if (direcX == Enums.TypeDirec.Xpos)
+                {
+                    if (X1 + XDim1 - tolerance > X2)
+                    {
+                        return Enums.TypeRoomConfig.ver2Room;
+                    }
+                    else
+                    {
+                        if ((X1 + XDim1 + eqWallThick) > X2)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+                else if (direcX == Enums.TypeDirec.Xneg)
+                {
+                    if (X2 + XDim2 - tolerance > X1)
+                    {
+                        return Enums.TypeRoomConfig.ver2Room;
+                    }
+                    else
+                    {
+                        if ((X2 + XDim2 + eqWallThick) > X1)
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                    }
+                }
+            }
+            else if (X1 != X2)
+            {
+                if (Y1 - tolerance < Y2 && Y1 + tolerance > Y2 || Y2 - tolerance < Y1 && Y2 + tolerance > Y1) //==
+                {
+                    if (direcX == Enums.TypeDirec.Xpos)
+                    {
+                        if (X1 + XDim1 - tolerance > X2)
+                        {
+                            return Enums.TypeRoomConfig.ver2Room;
+                        }
+                        else
+                        {
+                            if ((X1 + XDim1 + eqWallThick) > X2)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                    if (direcX == Enums.TypeDirec.Xneg)
+                    {
+                        if (X2 + XDim2 - tolerance > X1)
+                        {
+                            return Enums.TypeRoomConfig.ver2Room;
+                        }
+                        else
+                        {
+                            if ((X2 + XDim2 + eqWallThick) > X1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                        }
+                    }
+                }
+                else if (Y1 != Y2)
+                {
+                    if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Ypos)
+                    {
+                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
+                        {
+                            return Enums.TypeRoomConfig.invalid;
+                        }
+                        else if ((Y1 + YDim1) > Y2 && (X1 + XDim1) > X2)
+                        {
+                            return Enums.TypeRoomConfig.ver1Room;
+                        }
+                        else if (((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
+                        {
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.ver2Room;
+                            }
+                        }
+                        else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
+                        {
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
+                            {
+                                return Enums.TypeRoomConfig.invalid;
+                            }
+                            else
+                            {
+                                return Enums.TypeRoomConfig.ver2Room;
+                            }
+                        }
+                    }
                     else if (direcX == Enums.TypeDirec.Xpos && direcY == Enums.TypeDirec.Yneg)
                     {
-                        if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1) && ((X1 + XDim1 + 0.4) > X2) && ((X1 + XDim1) < X2))
+                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X1 + XDim1 + eqWallThick) > X2) && ((X1 + XDim1) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y2 + YDim2) > Y1 && (X1 + XDim1) > X2)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver2Room;
                         }
-                        else if ((X1 + XDim1 + 0.4) > X2 && ((X1 + XDim1) < X2))
+                        else if ((X1 + XDim1 + eqWallThick) > X2 && ((X1 + XDim1) < X2))
                         {
-                            if (Y1 + YDim1 + 0.4 < Y2 || Y2 + YDim2 + 0.4 < Y1)
+                            if (Y1 + YDim1 + eqWallThick < Y2) // || Y2 + YDim2 + eqWallThick < Y1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
-                        else if ((Y2 + YDim2 + 0.4) > Y1 && ((Y2 + YDim2) < Y1))
+                        else if ((Y2 + YDim2 + eqWallThick) > Y1 && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X2 + XDim2 + eqWallThick < X1) // || X1 + XDim1 + eqWallThick < X2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Ypos)
                     {
-                        if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + 0.4) > X2) && ((X2 + XDim2) < X2))
+                        if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y1 + YDim1) > Y2 && (X2 + XDim2) > X1)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver2Room;
                         }
-                        else if (((X2 + XDim2 + 0.4) > X1) && (X2 + XDim2) < X1)
+                        else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y1 + YDim1 + 0.4 < Y2 || Y2 + XDim2 + 0.4 < Y1)
+                            if (Y2 + XDim2 + eqWallThick < Y1) // || Y1 + YDim1 + eqWallThick < Y2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
-                        else if (((Y1 + YDim1 + 0.4) > Y2) && ((Y1 + YDim1) < Y2))
+                        else if (((Y1 + YDim1 + eqWallThick) > Y2) && ((Y1 + YDim1) < Y2))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X1 + XDim1 + eqWallThick < X2) // || X2 + XDim2 + eqWallThick < X1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
                     }
                     else if (direcX == Enums.TypeDirec.Xneg && direcY == Enums.TypeDirec.Yneg)
                     {
-                        if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + 0.4) > X2) && ((X2 + XDim2) < X2))
+                        if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1) && ((X2 + XDim2 + eqWallThick) > X2) && ((X2 + XDim2) < X2))
                         {
-                            roomConfig = Enums.TypeRoomConfig.verOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.invalid;
                         }
                         else if ((Y2 + YDim2) > Y1 && (X2 + XDim2) > X1)
                         {
-                            roomConfig = Enums.TypeRoomConfig.verNegOff;
-                            Console.WriteLine(roomConfig);
+                            return Enums.TypeRoomConfig.ver2Room;
                         }
-                        else if (((X2 + XDim2 + 0.4) > X1) && (X2 + XDim2) < X1)
+                        else if (((X2 + XDim2 + eqWallThick) > X1) && (X2 + XDim2) < X1)
                         {
-                            if (Y2 + YDim2 + 0.4 < Y1 || Y1 + XDim1 + 0.4 < Y2)
+                            if (Y2 + YDim2 + eqWallThick < Y1 || Y1 + XDim1 + eqWallThick < Y2)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
-                        else if (((Y2 + YDim2 + 0.4) > Y1) && ((Y2 + YDim2) < Y1))
+                        else if (((Y2 + YDim2 + eqWallThick) > Y1) && ((Y2 + YDim2) < Y1))
                         {
-                            if (X1 + XDim1 + 0.4 < X2 || X2 + XDim2 + 0.4 < X1)
+                            if (X1 + XDim1 + eqWallThick < X2 || X2 + XDim2 + eqWallThick < X1)
                             {
-                                roomConfig = Enums.TypeRoomConfig.verPosOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.invalid;
                             }
                             else
                             {
-                                roomConfig = Enums.TypeRoomConfig.verNegOff;
-                                Console.WriteLine(roomConfig);
+                                return Enums.TypeRoomConfig.ver2Room;
                             }
                         }
                     }
                 }
-            }*/
+            }
             return roomConfig;
         }
     }
