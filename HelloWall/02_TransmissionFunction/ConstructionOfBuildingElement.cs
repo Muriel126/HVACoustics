@@ -13,13 +13,13 @@ namespace HVACoustics
     {
         public static IIfcMaterialLayerSet materialLayerSet { get; set; }
 
-        public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement, Enums.TypeRoomConfig roomConfig, string globalIdSender, 
-            string globalIdReciever)
+        public static Enums.TypeBuildingConstruction GetConstruction(IfcStore model, string globalIdConnectedBuildingElement,
+            Enums.TypeRoomConfig roomConfig, string globalIdSender, string globalIdReciever)
         {
             var sem = new SemanticHandler();
 
-            
-            if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff) // hier auch ver1Room und ver2Room?
+            if (roomConfig == Enums.TypeRoomConfig.ver || roomConfig == Enums.TypeRoomConfig.verNegOff || 
+                roomConfig == Enums.TypeRoomConfig.verPosOff || roomConfig == Enums.TypeRoomConfig.verOff)
             {
                 var globalIdConnectingSlab = sem.GetGlobalIdOfConnectingBuildingElementOfTwoSpaces(model, globalIdSender, globalIdReciever);
                 materialLayerSet = sem.GetMaterialLayerSet(model, globalIdConnectingSlab);
@@ -38,15 +38,15 @@ namespace HVACoustics
             }
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Now enter which type of building element the material layer set represents: ");
-            Console.WriteLine("a: Massivholzwand\n" +
-                              "b: einfach Ständerwerk\n" +
-                              "c: getrenntes Ständerwerk\n" +
-                              "d: einfaches Ständerwerk mit Konterlattung\n" +
-                              "e: einfach Ständerwerk Metall\n" +
-                              "f: getrenntes Ständerwerk Metall\n" +
-                              "g: Installationswand\n" +
-                              "h: Holzbalkendecke\n" +
-                              "i: Holzbetonverbund\n");
+            Console.WriteLine("a: Solid timber\n" +
+                              "b: Timber frame single\n" +
+                              "c: Timber frame double\n" +
+                              "d: Timber frame single with cross battens\n" +
+                              "e: Steel frame\n" +
+                              "f: Steel frame double\n" +
+                              "g: Plumbing wall\n" +
+                              "h: Timber joist floor\n" +
+                              "i: Timber concrete composite\n");
             string option = Console.ReadLine();
             if (option == "a")
             {

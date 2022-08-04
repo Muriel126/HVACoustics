@@ -14,8 +14,8 @@ namespace HVACoustics
     {
         public IIfcMaterialLayerSet GetMaterialLayerSet(IfcStore model, string globalIdConnectedBuildingElement)
         {
-            IIfcElement theWall = model.Instances.FirstOrDefault<IIfcElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
-            IIfcMaterialLayerSetUsage AllLayerSetsUsage = theWall.Material as IIfcMaterialLayerSetUsage;
+            IIfcElement theElement = model.Instances.FirstOrDefault<IIfcElement>(d => d.GlobalId == globalIdConnectedBuildingElement);
+            IIfcMaterialLayerSetUsage AllLayerSetsUsage = theElement.Material as IIfcMaterialLayerSetUsage;
             IIfcMaterialLayerSet materialLayerSet = AllLayerSetsUsage.ForLayerSet;
 
             return materialLayerSet;
